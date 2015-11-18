@@ -51,6 +51,7 @@ gem 'kaminari', github: 'jcoyne/kaminari', branch: 'sufia'  # required to handle
 gem "net-ldap"
 gem "pg"
 gem "clamav"
+gem "bagit"
 
 gem 'rsolr', '~> 1.0.6'
 gem 'devise'
