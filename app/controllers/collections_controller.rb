@@ -11,6 +11,11 @@ class CollectionsController < ApplicationController
 
  # private
 
+  def generate_tgz(file)
+	content = File.read(file)
+  	ActiveSupport::Gzip.compress(content)
+  end
+
   def export_bagit
 	base_path = "/tmp/"
 	collection_id = params[:id]
@@ -44,19 +49,25 @@ class CollectionsController < ApplicationController
 		File.open(mets_filepath, 'a') { |file| file.write(fileObj.content.extract_metadata) }
 
 		# add file to bagit
-		#bag.add_file(filename, temp_folder+filename)
-		#bag.manifest!
+		if !File.file?(bagit_path + "data/" + filename)
+			bag.add_file(filename, temp_folder+filename)
+			bag.manifest!
+		end
 
 	end
+
+	if !File.file?(bagit_path + "data/" + mets_filename)
+		bag.add_file(mets_filename, mets_filepath)
+		bag.manifest!
+	end
 	
-	#bag.add_file(mets_filename, mets_filepath)
-	#bag.manifest!
-
-	# delete bagit folder 
+	system("tar -zczf /tmp/#{collection_id}_bagit.tar.gz #{bagit_path}")
+	
 	FileUtils.rm(mets_filepath)
-	#FileUtils.rm_rf(bagit_path)
+	FileUtils.rm_rf(bagit_path)
+	FileUtils.rm_rf(temp_folder)
 
-	send_data generate_tgz(bagit_path), filename: collectionid + '.tgz'
+	send_file '/tmp/'+collection_id+'_bagit.tar.gz'
 
   end
 
