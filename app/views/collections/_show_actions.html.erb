@@ -1,0 +1,15 @@
+<h2 class="sr-only">Actions</h2>
+<div class="actions-controls-collections">
+  <% if can? :edit, @collection %>
+      <span class="label label-default"><%= link_to "Edit", collections.edit_collection_path, title: "Edit this Collection" %></span> &nbsp;&nbsp;
+      <span class="label label-default"><%= link_to "Add files",  sufia.dashboard_files_path, title: "Add files to this Collection" %></span> &nbsp;&nbsp;
+      <span class="label label-default"><%= link_to "Download",  export_bagit_path(@collection), title: "Download this Collection" %></span>
+  <%end %>
+	<%= @collection.inspect %>
+	<%= @members.inspect %>
+	<% char = "" %>
+	<% @collection.member_ids.each do |document| %>
+	<%= GenericFile.find(document).filename %>
+	<% end %>
+	
+</div>
