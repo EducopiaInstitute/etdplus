@@ -19,6 +19,7 @@ class CollectionsController < ApplicationController
 
 	# create temp folder
 	temp_folder = base_path + collection_id + "_tmp/"
+	Dir.mkdir(temp_folder) unless File.exists?(temp_folder)
 
 	# create Mets file
 	mets_filename = collection_id + ".txt"
@@ -29,11 +30,11 @@ class CollectionsController < ApplicationController
 	bagit_path = base_path + collection_id + "_bag/" 
 	bag = BagIt::Bag.new bagit_path
 
-	collection.memeber_ids.each do |doc_id|
+	collection.member_ids.each do |doc_id|
 		# get file and save to temp folder
 		fileObj = GenericFile.find(doc_id)
-		fileurl = fileObj.content.url
-		filename = fileObj.filename
+		fileurl = fileObj.content.uri
+		filename = fileObj.filename[0]
 		open(temp_folder+filename, 'wb') do |file|
 			file << open(fileurl).read
 		end
@@ -43,13 +44,13 @@ class CollectionsController < ApplicationController
 		File.open(mets_filepath, 'a') { |file| file.write(fileObj.content.extract_metadata) }
 
 		# add file to bagit
-		bag.add_file(filename, temp_folder+filename)
-		bag.manifest!
+		#bag.add_file(filename, temp_folder+filename)
+		#bag.manifest!
 
 	end
 	
-	bag.add_file(mets_filename, mets_filepath)
-	bag.manifest!
+	#bag.add_file(mets_filename, mets_filepath)
+	#bag.manifest!
 
 	# delete bagit folder 
 	FileUtils.rm(mets_filepath)

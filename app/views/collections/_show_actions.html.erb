@@ -9,7 +9,8 @@
 	<%= @members.inspect %>
 	<% char = "" %>
 	<% @collection.member_ids.each do |document| %>
-	<%= GenericFile.find(document).filename %>
+	<%= GenericFile.find(document).filename[0] %>
+	<%= GenericFile.find(document).content.uri %>
 	<% end %>
 	
 </div>
