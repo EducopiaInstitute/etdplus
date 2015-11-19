@@ -8,14 +8,6 @@ class CollectionsController < ApplicationController
      
   end
 
-
- # private
-
-  def generate_tgz(file)
-	content = File.read(file)
-  	ActiveSupport::Gzip.compress(content)
-  end
-
   def export_bagit
 	base_path = "/tmp/"
 	collection_id = params[:id]
