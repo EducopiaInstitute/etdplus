@@ -21,3 +21,4 @@ EtdPlus.config do |config|
   # If PII is detected in a file, by default the file will be deleted. If this is false, the
   # file will be forced to a private visibility.
   config.destroy_pii_immediately = True
+end
