@@ -5,7 +5,6 @@ class CollectionsController < ApplicationController
 
   def show
       super
-     
   end
 
   def export_bagit
@@ -35,8 +34,12 @@ class CollectionsController < ApplicationController
 		open(temp_folder+filename, 'wb') do |file|
 			file << open(fileurl).read
 		end
+
 		# virus scan
-		
+		if fileObj.detect_viruses
+			render status: 500
+		end		
+	
 		# append Mets file
 		File.open(mets_filepath, 'a') { |file| file.write(fileObj.content.extract_metadata) }
 
