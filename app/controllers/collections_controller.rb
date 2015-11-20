@@ -104,6 +104,8 @@ class CollectionsController < ApplicationController
 	  	}
 	  }
 
+	  b[:mets].fileSec() {
+	  }
 
 	  b[:mets].structMap() {
 		  b[:mets].div("TYPE" => "text", "LABEL" => collectiondata.title, "ADMID" => "RMD1", "DMDID" => "DMR1 DM1")
@@ -162,10 +164,9 @@ class CollectionsController < ApplicationController
 	Dir.mkdir(temp_folder) unless File.exists?(temp_folder)
 
 	# create Mets file
-	mets_filename = collection_id + ".txt"
+	mets_filename = collection_id + "_mets.xml"
 	mets_filepath = temp_folder + mets_filename
 	metsxml = create_mets(collection)
-	# File.open(mets_filepath, 'w') { |file| file.write(create_mets(collection)) }
 
 	# bagit path
 	bagit_path = base_path + collection_id + "_bag/" 
@@ -190,9 +191,9 @@ class CollectionsController < ApplicationController
 		#	render status: 500
 		#end		
 
-		# append Mets file
+		# append Fits info
 		metsxml = insert_supplement(metsxml, fileObj)
-		# File.open(mets_filepath, 'a') { |file| file.write(fileObj.content.extract_metadata) }
+		# File.open('/tmp/fits.xml', 'a') { |file| file.write(fileObj.content.extract_metadata) }
 
 		# add file to bagit
 		if !File.file?(bagit_path + "data/" + filename)
