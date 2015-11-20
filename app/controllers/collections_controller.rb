@@ -39,7 +39,12 @@ class CollectionsController < ApplicationController
 		if fileObj.detect_viruses
 			render status: 500
 		end		
-	
+
+		# Pii scan
+		#if fileObj.bulk_extractor_inspect
+		#	render status: 500
+		#end		
+
 		# append Mets file
 		File.open(mets_filepath, 'a') { |file| file.write(fileObj.content.extract_metadata) }
 
