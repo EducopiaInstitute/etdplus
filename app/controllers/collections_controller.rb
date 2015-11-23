@@ -153,6 +153,45 @@ class CollectionsController < ApplicationController
 
   end
 
+  def insert_fitsinfo(metsxml, fitsxml, filedata)
+  	@doc = Nokogiri::XML(fitsxml)
+  	@identity = @doc.xpath('//xmlns:identification/xmlns:identity')
+	mimetype = @identity[0]['mimetype']
+
+	toollist = []
+	for child in @identity.children
+		if child['toolname'] != nil
+	  		toollist.push( child['toolname'] )
+	  	end
+  	end
+
+	metsdoc = Nokogiri::XML(metsxml)
+
+	metsdoc.xpath('//mets:mets/mets:fileSec').each do |node|
+
+		for tool in toollist.uniq
+			fileGrp = Nokogiri::XML::Node.new "fileGrp", metsdoc
+			fileGrp['USE'] = tool
+			file = Nokogiri::XML::Node.new "file", fileGrp
+			file['ID'] = filedata.id
+			file['MIMETYPE'] = mimetype
+			file['SEQ'] = "1"
+			file['GROUPID'] = "GID1"
+			linktype = Nokogiri::XML::Node.new "FLocat", file
+			linktype['xlink:href'] = ""
+			linktype['LOCTYPE'] = "URL"
+			file.add_child(linktype)
+			fileGrp.add_child(file)
+			node.add_child(fileGrp)
+		end
+
+	end
+
+	return metsdoc.to_xml
+
+  end
+
+
   def export_bagit
 	base_path = "/tmp/"
 	collection_id = params[:id]
@@ -193,6 +232,7 @@ class CollectionsController < ApplicationController
 
 		# append Fits info
 		metsxml = insert_supplement(metsxml, fileObj)
+		metsxml = insert_fitsinfo(metsxml, fileObj.content.extract_metadata, fileObj)
 		# File.open('/tmp/fits.xml', 'a') { |file| file.write(fileObj.content.extract_metadata) }
 
 		# add file to bagit
@@ -210,7 +250,7 @@ class CollectionsController < ApplicationController
 		bag.manifest!
 	end
 	
-	system("tar -zczf /tmp/#{collection_id}_bagit.tar.gz #{bagit_path}")
+	system("cd /tmp/; tar -zcvf #{collection_id}_bagit.tar.gz #{collection_id}_bag")
 	
 	FileUtils.rm(mets_filepath)
 	FileUtils.rm_rf(bagit_path)
