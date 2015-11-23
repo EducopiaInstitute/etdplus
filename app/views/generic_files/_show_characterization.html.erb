@@ -1,0 +1,67 @@
+<h2>Characterization Details Categorized by Tool Name</h2>
+<table class="table table-bordered table-striped">
+  <thead>
+  <tr>
+    <th>Tool Name</th>
+    <th>Tool Version</th>
+    <th>Characterization</th>
+  </tr>
+  </thead>
+  <% @section_elements.each do |section| %>
+    <% section_name = section.name.capitalize %>
+    <% if section_name == "Identification" %>
+      <% identity_array = section.element_children %>
+      <% identity_array.each do |identity| %>
+        <tr>
+          <th></th>
+          <th></th>
+          <th><h4><%= "#{section_name}: #{identity.name.capitalize}" %></h4></th>
+        </tr>
+        <% fits_tools_to_display(identity).each do |tool| %>
+        <tr>
+          <td><%= tool["toolname"] %></td>
+          <td><%= tool["toolversion"] %></td>
+          <td>
+            <% if tool.name == "tool" %>
+              <% fits_identity_attributes(identity).each do |a| %>
+              <dl>
+                <dt><%= a.name %></dt>
+                <dd><%= a.value %></dd>
+              </dl>
+              <% end %>
+            <% else %>
+              <dl>
+                <dt><%= tool.name %></dt>
+                <dd><%= tool.text %></dd>
+              </dl>
+            <% end %>
+          </td>
+        </tr>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if section_name == "Metadata" %>
+        <% section = section.element_children[0] %>
+        <% section_name += ": #{section.name.capitalize}" %>
+      <% end %>
+      <tr>
+        <th></th>
+        <th></th>
+        <th><h4><%= section_name %></h4></th>
+      </tr>
+      <% fits_tools_to_display(section).each do |tool| %>
+        <tr>
+          <td><%= tool["toolname"] %></td>
+          <td><%= tool["toolversion"] %></td>
+          <td>
+            <dl>
+              <dt><%= tool.name %></dt>
+              <dd><%= tool.text %></dd>
+            </dl>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  <% end %>
+</table>
+
