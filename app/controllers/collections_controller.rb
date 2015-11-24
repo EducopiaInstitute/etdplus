@@ -157,13 +157,20 @@ class CollectionsController < ApplicationController
   	@doc = Nokogiri::XML(fitsxml)
   	@identity = @doc.xpath('//xmlns:identification/xmlns:identity')
 	mimetype = @identity[0]['mimetype']
+	attrlist = ['mimetype', '*']
+
+	whitelist = Rails.configuration.x.fits_export_whitelist	
 
 	toollist = []
 	for child in @identity.children
-		if child['toolname'] != nil
-	  		toollist.push( child['toolname'] )
-	  	end
-  	end
+                if child['toolname'] != nil && whitelist.keys.include?(child['toolname'].to_sym)
+                        for attr in whitelist[child['toolname'].to_sym]
+                                if attrlist.include?(attr)
+                                        toollist.push( child['toolname'] )
+                                end
+                        end
+                end
+        end
 
 	metsdoc = Nokogiri::XML(metsxml)
 
