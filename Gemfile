@@ -60,3 +60,5 @@ group :development, :test do
   gem 'jettywrapper'
 end
 gem 'hydra-role-management'
+
+gem 'zaru', github: 'VTUL/zaru'
