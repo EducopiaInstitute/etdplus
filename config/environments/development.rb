@@ -1,3 +1,8 @@
+Sufia::Engine.configure do
+  config.contact_email = 'root@localhost'
+  config.from_email = 'no-reply@localhost'
+end
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 

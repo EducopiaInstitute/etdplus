@@ -3,6 +3,8 @@ class GenericFile < ActiveFedora::Base
 
   before_save :sanitize_filenames
 
+  property :virus_scan_event, predicate: ::RDF::DC.provenance
+
   private
 
     def sanitize_filenames

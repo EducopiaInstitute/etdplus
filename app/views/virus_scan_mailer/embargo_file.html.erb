@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h3>Hello <%= @user.name %>,</h3>
+    <p>
+      We are sorry to inform you that a virus was detected in one of your files uploaded to ETDPlus. (<%= @url %>)
+      It is our policy to prevent public release of files that do not pass a virus check.
+      The file in question was named <%= @file_name %>.
+    </p>
+    <p>
+      For further information, please contact us through our contact form, at <%= @url %>/contact
+    </p>
+    <p>The ETDPlus Team</p>
+  </body>
+</html>
