@@ -23,3 +23,12 @@ Etdplus::Application.config.x.destroy_viruses_immediately = true
 # If PII is detected in a file, by default the file will be deleted. If this is false, the
 # file will be forced to a private visibility.
 Etdplus::Application.config.x.destroy_pii_immediately = true
+
+# Zaru sanitizes filenames. These options are passed to it when a file is saved.
+Etdplus::Application.config.x.filename_options = {
+  # The options provided by default below mimic the way detox works. (http://detox.sourceforge.net/)
+  #length: 255, # The max length of the final filename. Default is 255.
+  #allow_unicode: false, # Can filenames include unicode? Default is false.
+  replace: '_', # Replacement for bad characters. Default is '', which deletes them.
+  whitespace: '', # Replacement for whitespace characters. Default is ' ', which collapses multiples.
+}
