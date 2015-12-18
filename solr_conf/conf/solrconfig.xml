@@ -14,6 +14,7 @@
   <lib dir="../lib/contrib/analysis-extras/lib" />
   <lib dir="../lib/contrib/analysis-extras/lucene-libs" />
   <!-- for full-text indexing -->
+  <lib dir="../dist/" regex="solr-cell-\d.*\.jar" />
   <lib dir="../lib/contrib/extraction/lib" regex=".*\.jar" />
 
   <dataDir>${solr.data.dir:}</dataDir>
