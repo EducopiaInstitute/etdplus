@@ -1,6 +1,5 @@
 class GenericFile < ActiveFedora::Base
   include Sufia::GenericFile
-  include Etdplus::GenericFile::VirusCheck
 
   before_save :sanitize_filenames
 
