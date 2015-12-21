@@ -1,4 +1,4 @@
-module EtdPlus
+module Etdplus
   module GenericFile
     module VirusCheck
       extend ActiveSupport::Concern
