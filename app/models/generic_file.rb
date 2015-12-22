@@ -25,7 +25,7 @@ class GenericFile < ActiveFedora::Base
     gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
     if found_pii.empty?
       gf_actor.update_metadata({pii_scan_event: ['No pii detected']}, visibility)
-      return
+      true
     elsif found_pii.length == 2
       message = 'Found SSN and Credit Card Number'
     else
@@ -35,6 +35,7 @@ class GenericFile < ActiveFedora::Base
     errors.add(:base, message)
     PiiMailer.destroy_file(id).deliver_later
     gf_actor.destroy
+    false
   end
 
   private
