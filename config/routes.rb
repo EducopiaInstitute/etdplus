@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   
+  get 'collections/:id/export_bagit', to: 'collections#export_bagit' , as: 'export_bagit'
   blacklight_for :catalog
   devise_for :users
   mount Hydra::RoleManagement::Engine => '/'
