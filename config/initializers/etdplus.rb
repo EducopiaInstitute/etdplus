@@ -32,3 +32,8 @@ Etdplus::Application.config.x.filename_options = {
   replace: '_', # Replacement for bad characters. Default is '', which deletes them.
   whitespace: '', # Replacement for whitespace characters. Default is ' ', which collapses multiples.
 }
+
+# Bags cen be generated without logging in if the user is in the IP adress range given below.
+Etdplus::Application.config.x.ip_whitelist = IPAddr.new('127.0.0.1')
+# Addresses can be IPv4 or IPv6, and can include range masks.
+# Eg: '3ffe:505:2::1' or '192.168.2.0/24'
