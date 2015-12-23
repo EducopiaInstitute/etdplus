@@ -10,9 +10,10 @@ module Etdplus
       # Default behavior is to raise a validation error and halt the save if a virus is found
       def detect_viruses
         return unless content.changed?
+        #depositor = User.find_by_user_key(self.depositor)
+        #gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
         Sufia::GenericFile::Actor.virus_check(local_path_for_content)
-        gf_actor = Sufia::GenericFile::Actor.new(generic_file, depositor)
-        gf_actor.update_metadata({virus_scan_event: 'No viruses detected'}, visibility)
+        #gf_actor.update_metadata({virus_scan_event: ['No viruses detected']}, visibility)
         true
       rescue Sufia::VirusFoundError => virus
         logger.warn(virus.message)
@@ -21,7 +22,7 @@ module Etdplus
           VirusScanMailer.destroy_file(generic_file.id).deliver_later
           false
         else
-          gf_actor.update_metadata({virus_scan_event: 'Virus detected, file embargoed', read_groups: ['private']}, 'restricted')
+          #gf_actor.update_metadata({virus_scan_event: ['Virus detected, file embargoed'], read_groups: ['private']}, 'restricted')
           VirusScanMailer.embargo_file(generic_file.id).deliver_later
           true
         end

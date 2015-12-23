@@ -3,7 +3,9 @@ class GenericFile < ActiveFedora::Base
   include Etdplus::GenericFile::VirusCheck
 
   before_save :sanitize_filenames
-  before_save :bulk_extractor_scan
+  include do 
+    validate :bulk_extractor_scan
+  end
 
   property :virus_scan_event, predicate: ::RDF::DC.provenance
   property :pii_scan_event, predicate: ::RDF::DC.provenance
@@ -12,7 +14,7 @@ class GenericFile < ActiveFedora::Base
     found_pii = []
     Dir.mktmpdir do |dir|
       file = Tempfile.new(['', '.txt'])
-      file.write g.append_metadata.gsub /\s+/, ' '
+      file.write append_metadata.gsub /\s+/, ' '
       file.close
       cmd_string = "bulk_extractor -o #{dir}/bulk_extractor #{file.path}"
       Open3.popen3(cmd_string)
@@ -21,10 +23,11 @@ class GenericFile < ActiveFedora::Base
         (entry == "ccn.txt" || entry == "pii.txt") && File.size("#{dir}/bulk_extractor/#{entry}") > 0
       }
     end
-    depositor = User.find_by_user_key(self.depositor)
-    gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
+    #depositor = User.find_by_user_key(self.depositor)
+    #gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
     if found_pii.empty?
-      gf_actor.update_metadata({pii_scan_event: ['No pii detected']}, visibility)
+      #gf_actor.update_metadata({pii_scan_event: ['No pii detected']}, visibility)
+      self.update_attributes({pii_scan_event: ['No pii detected']})
       true
     elsif found_pii.length == 2
       message = 'Found SSN and Credit Card Number'
@@ -34,7 +37,8 @@ class GenericFile < ActiveFedora::Base
     logger.warn(message)
     errors.add(:base, message)
     PiiMailer.destroy_file(id).deliver_later
-    gf_actor.destroy
+    #gf_actor.destroy
+    self.destroy
     false
   end
 
