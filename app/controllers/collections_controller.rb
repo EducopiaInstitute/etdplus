@@ -18,7 +18,7 @@ class CollectionsController < ApplicationController
 	b = Nokogiri::XML::Builder.new
 
 	b[:mets].mets(namespaces) {
-	  b[:mets].metsHdr("CREATEDATE" => collectiondata.date_created[0], "LASTMODDATE" => "2015-11-30T04:28:25")  {
+	  b[:mets].metsHdr("CREATEDATE" => collection.date_created[0], "LASTMODDATE" => "2015-11-30T04:28:25")  {
 	    b[:mets].agent("ROLE" => "CREATOR", "TYPE" => "ORGANIZATION" ) {
 	      b[:mets].name('UNIVERSITY or SCHOOL')
 	    }
@@ -33,11 +33,11 @@ class CollectionsController < ApplicationController
 
 	  b[:mets].dmdSec("ID" => "DMR1") {
 		  b[:mets].mdWrap("MDTYPE" => "MODS",
-		  	"LABEL" => collectiondata.title) {
+		  	"LABEL" => collection.title) {
 		  	b[:mets].xmlData() {
 		  		b[:mods].mods() {
 		  			b[:mods].titleInfo() {
-		  				b[:mods].title(collectiondata.title)
+		  				b[:mods].title(collection.title)
 		  			}
 
 		  			# multiple AUTHOR
@@ -101,7 +101,7 @@ class CollectionsController < ApplicationController
 	  }
 
 	  b[:mets].structMap() {
-		  b[:mets].div("TYPE" => "text", "LABEL" => collectiondata.title, "ADMID" => "RMD1", "DMDID" => "DMR1 DM1")
+		  b[:mets].div("TYPE" => "text", "LABEL" => collection.title, "ADMID" => "RMD1", "DMDID" => "DMR1 DM1")
 	  }
 
 	}
