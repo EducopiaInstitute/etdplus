@@ -112,141 +112,142 @@ class CollectionsController < ApplicationController
 
 
   def insert_supplement(metsxml, filedata)
-  	doc = Nokogiri::XML(metsxml)
-	doc.xpath('//mets:mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods:mods').each do |node|
+    doc = Nokogiri::XML(metsxml)
+    doc.xpath('//mets:mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods:mods').each do |node|
+      b = Nokogiri::XML::Node.new "relatedItem", doc
+      b['displayLabel'] = "Supplemental File"
+      b['type'] = "constituent"
+      titleInfo = Nokogiri::XML::Node.new "titleInfo", b
+      title = Nokogiri::XML::Node.new "title", titleInfo
+      title.content = filedata.filename[0]
+      identifier = Nokogiri::XML::Node.new "identifier", b
+      identifier['type'] = "local search"
+      identifier.content = filedata.id
+      titleInfo.add_child(title)
+      b.add_child(titleInfo)
+      b.add_child(identifier)
+      node.add_child(b)
+    end
 
-		b = Nokogiri::XML::Node.new "relatedItem", doc
-		b['displayLabel'] = "Supplemental File"
-		b['type'] = "constituent"
-		titleInfo = Nokogiri::XML::Node.new "titleInfo", b
-		title = Nokogiri::XML::Node.new "title", titleInfo
-		title.content = filedata.filename[0]
-		identifier = Nokogiri::XML::Node.new "identifier", b
-		identifier['type'] = "local search"
-		identifier.content = filedata.id
-		titleInfo.add_child(title)
-		b.add_child(titleInfo)
-		b.add_child(identifier)
-		node.add_child(b)
+    doc.xpath('//mets:mets/mets:structMap/mets:div').each do |node|
+      fptr = Nokogiri::XML::Node.new "fptr", doc
+      fptr['FILEID'] = filedata.id
+      node.add_child(fptr)
+    end
 
-	end
-
-	doc.xpath('//mets:mets/mets:structMap/mets:div').each do |node|
-
-		fptr = Nokogiri::XML::Node.new "fptr", doc
-		fptr['FILEID'] = filedata.id
-		node.add_child(fptr)
-
-	end
-
-	return doc.to_xml
-
+    return doc.to_xml
   end
 
-
   def insert_fitsinfo(metsxml, fitsxml, filedata)
-  	@doc = Nokogiri::XML(fitsxml)
-  	@identity = @doc.xpath('//xmlns:identification/xmlns:identity')
-	mimetype = @identity[0]['mimetype']
-	attrlist = ['mimetype', '*']
+    @doc = Nokogiri::XML(fitsxml)
+    @identity = @doc.xpath('//xmlns:identification/xmlns:identity')
+    mimetype = @identity[0]['mimetype']
+    attrlist = ['mimetype', '*']
 
-	whitelist = Rails.configuration.x.fits_export_whitelist
+    whitelist = Rails.configuration.x.fits_export_whitelist
 
-	toollist = []
-	for child in @identity.children
-                if child['toolname'] != nil && whitelist.keys.include?(child['toolname'].to_sym)
-                        for attr in whitelist[child['toolname'].to_sym]
-                                if attrlist.include?(attr)
-                                        toollist.push( child['toolname'] )
-                                end
-                        end
-                end
+    toollist = []
+    for child in @identity.children
+      if child['toolname'] != nil && whitelist.keys.include?(child['toolname'].to_sym)
+        for attr in whitelist[child['toolname'].to_sym]
+          if attrlist.include?(attr)
+            toollist.push( child['toolname'] )
+          end
         end
+      end
+    end
 
-	metsdoc = Nokogiri::XML(metsxml)
-	metsdoc.xpath('//mets:mets/mets:fileSec').each do |node|
-		for tool in toollist.uniq
-			fileGrp = Nokogiri::XML::Node.new "fileGrp", metsdoc
-			fileGrp['USE'] = tool
-			file = Nokogiri::XML::Node.new "file", fileGrp
-			file['ID'] = filedata.id
-			file['MIMETYPE'] = mimetype
-			file['SEQ'] = "1"
-			file['GROUPID'] = "GID1"
-			linktype = Nokogiri::XML::Node.new "FLocat", file
-			linktype['xlink:href'] = ""
-			linktype['LOCTYPE'] = "URL"
-			file.add_child(linktype)
-			fileGrp.add_child(file)
-			node.add_child(fileGrp)
-		end
-	end
+    metsdoc = Nokogiri::XML(metsxml)
+    metsdoc.xpath('//mets:mets/mets:fileSec').each do |node|
+      for tool in toollist.uniq
+        fileGrp = Nokogiri::XML::Node.new "fileGrp", metsdoc
+        fileGrp['USE'] = tool
+        file = Nokogiri::XML::Node.new "file", fileGrp
+        file['ID'] = filedata.id
+        file['MIMETYPE'] = mimetype
+        file['SEQ'] = "1"
+        file['GROUPID'] = "GID1"
+        linktype = Nokogiri::XML::Node.new "FLocat", file
+        linktype['xlink:href'] = ""
+        linktype['LOCTYPE'] = "URL"
+        file.add_child(linktype)
+        fileGrp.add_child(file)
+        node.add_child(fileGrp)
+      end
+    end
 
-	return metsdoc.to_xml
-
+    return metsdoc.to_xml
   end
 
   def export_bagit
-	collection_id = params[:id]
-	collection = Collection.find(collection_id)
-	collection_attributes = collection.title
+    collection_id = params[:id]
+    collection = Collection.find(collection_id)
+    collection_attributes = collection.title
 
-	# create temp folder
-	Dir.mktmpdir do |dir|
+    unless authorize_export(collection)
+      render status: 401
+    end
 
-		# create Mets file
-		mets_filename = collection_id + "_mets.xml"
-		mets_filepath = dir + "/" + mets_filename
-		metsxml = create_mets(collection)
+    # create temp folder
+    Dir.mktmpdir do |dir|
+      # create Mets file
+      mets_filename = collection_id + "_mets.xml"
+      mets_filepath = dir + "/" + mets_filename
+      metsxml = create_mets(collection)
 
-		# bagit path
-		bagit_path = dir + "/" + collection_id + "_bag/"
-		bag = BagIt::Bag.new bagit_path
+      # bagit path
+      bagit_path = dir + "/" + collection_id + "_bag/"
+      bag = BagIt::Bag.new bagit_path
 
-		collection.member_ids.each do |doc_id|
-			# get file and save to temp folder
-			fileObj = GenericFile.find(doc_id)
-			fileurl = fileObj.content.uri
-			filename = fileObj.filename[0]
-			open(temp_folder+filename, 'wb') do |file|
-				file << open(fileurl).read
-			end
+      collection.member_ids.each do |doc_id|
+        # get file and save to temp folder
+        fileObj = GenericFile.find(doc_id)
+        fileurl = fileObj.content.uri
+        filename = fileObj.filename[0]
+        open(temp_folder+filename, 'wb') do |file|
+          file << open(fileurl).read
+        end
 
-			# virus scan
-			if fileObj.detect_viruses
-				render status: 500
-			end
+        # virus scan
+        if fileObj.detect_viruses
+          render status: 500
+        end
 
-			# Pii scan
-			if fileObj.bulk_extractor_scan
-				render status: 500
-			end
+        # Pii scan
+        if fileObj.bulk_extractor_scan
+          render status: 500
+        end
 
-			# append Fits info
-			metsxml = insert_supplement(metsxml, fileObj)
-			metsxml = insert_fitsinfo(metsxml, fileObj.content.extract_metadata, fileObj)
+        # append Fits info
+        metsxml = insert_supplement(metsxml, fileObj)
+        metsxml = insert_fitsinfo(metsxml, fileObj.content.extract_metadata, fileObj)
 
-			# add file to bagit
-			if !File.file?(bagit_path + "data/" + filename)
-				bag.add_file(filename, temp_folder+filename)
-				bag.manifest!
-			end
+        # add file to bagit
+        if !File.file?(bagit_path + "data/" + filename)
+          bag.add_file(filename, temp_folder+filename)
+          bag.manifest!
+        end
+      end
 
-		end
+      File.open(mets_filepath, 'w') { |file| file.write(metsxml) }
 
-		File.open(mets_filepath, 'w') { |file| file.write(metsxml) }
+      if !File.file?(bagit_path + "data/" + mets_filename)
+        bag.add_file(mets_filename, mets_filepath)
+        bag.manifest!
+      end
 
-		if !File.file?(bagit_path + "data/" + mets_filename)
-			bag.add_file(mets_filename, mets_filepath)
-			bag.manifest!
-		end
-		
-		system("tar -zcvf #{collection_id}_bagit.tar.gz -C #{dir}/#{collection_id}_bag .")
-		send_file collection_id +'_bagit.tar.gz'
-
-	end
-
+      system("tar -zcvf #{collection_id}_bagit.tar.gz -C #{dir}/#{collection_id}_bag .")
+      send_file collection_id +'_bagit.tar.gz'
+    end
   end
 
-end
+  private
 
+    def authorize_export(collection)
+      if Rails.configuration.x.ip_whitelist.include?(request.remote_ip)
+        true
+      end
+
+      authorize! :edit, collection
+    end
+end
