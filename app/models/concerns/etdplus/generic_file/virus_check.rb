@@ -11,18 +11,18 @@ module Etdplus
       def detect_viruses
         return unless content.changed?
         Sufia::GenericFile::Actor.virus_check(local_path_for_content)
-        gf_actor = Sufia::GenericFile::Actor.new(generic_file, depositor)
-        gf_actor.update_metadata({virus_scan_event: 'No viruses detected'}, visibility)
+        gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
+        gf_actor.update_metadata({virus_scan_event: ['No viruses detected']}, visibility)
         true
       rescue Sufia::VirusFoundError => virus
         logger.warn(virus.message)
         errors.add(:base, virus.message)
         if Rails.configuration.x.destroy_viruses_immediately
-          VirusScanMailer.destroy_file(generic_file.id).deliver_later
+          VirusScanMailer.destroy_file(id).deliver_later
           false
         else
-          gf_actor.update_metadata({virus_scan_event: 'Virus detected, file embargoed', read_groups: ['private']}, 'restricted')
-          VirusScanMailer.embargo_file(generic_file.id).deliver_later
+          gf_actor.update_metadata({virus_scan_event: ['Virus detected, file embargoed'], read_groups: ['private']}, 'restricted')
+          VirusScanMailer.embargo_file(id).deliver_later
           true
         end
       end

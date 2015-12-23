@@ -12,7 +12,7 @@ class GenericFile < ActiveFedora::Base
     found_pii = []
     Dir.mktmpdir do |dir|
       file = Tempfile.new(['', '.txt'])
-      file.write g.append_metadata.gsub /\s+/, ' '
+      file.write append_metadata.gsub /\s+/, ' '
       file.close
       cmd_string = "bulk_extractor -o #{dir}/bulk_extractor #{file.path}"
       Open3.popen3(cmd_string)
