@@ -119,7 +119,7 @@ class CollectionsController < ApplicationController
       b['type'] = "constituent"
       titleInfo = Nokogiri::XML::Node.new "titleInfo", b
       title = Nokogiri::XML::Node.new "title", titleInfo
-      title.content = filedata.filename[0]
+      title.content = filedata.label
       identifier = Nokogiri::XML::Node.new "identifier", b
       identifier['type'] = "local search"
       identifier.content = filedata.id
@@ -203,8 +203,8 @@ class CollectionsController < ApplicationController
         # get file and save to temp folder
         fileObj = GenericFile.find(doc_id)
         fileurl = fileObj.content.uri
-        filename = fileObj.filename[0]
-        open(temp_folder+filename, 'wb') do |file|
+        filename = fileObj.label
+        open(dir + "/" + filename, 'wb') do |file|
           file << open(fileurl).read
         end
 
@@ -214,9 +214,9 @@ class CollectionsController < ApplicationController
         end
 
         # Pii scan
-        if fileObj.bulk_extractor_scan
-          render status: 500
-        end
+        #if fileObj.bulk_extractor_scan
+        #  render status: 500
+        #end
 
         # append Fits info
         metsxml = insert_supplement(metsxml, fileObj)
@@ -224,7 +224,7 @@ class CollectionsController < ApplicationController
 
         # add file to bagit
         if !File.file?(bagit_path + "data/" + filename)
-          bag.add_file(filename, temp_folder+filename)
+          bag.add_file(filename, dir + "/" + filename)
           bag.manifest!
         end
       end
