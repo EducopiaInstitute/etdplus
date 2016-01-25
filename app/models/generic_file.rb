@@ -1,45 +1,76 @@
+require 'etdplus/models/pii_found_error'
+
 class GenericFile < ActiveFedora::Base
   include Sufia::GenericFile
   include Etdplus::GenericFile::VirusCheck
 
   before_save :sanitize_filenames
-  include do 
-    validate :bulk_extractor_scan
+  validate :detect_pii
+  property :scan_event, predicate: ::RDF::DC.provenance
+
+  def detect_pii
+    return unless content.changed?
+    begin
+      bulk_extractor_scan
+    rescue Etdplus::PiiFoundError => pii
+      logger.warn(pii.message)
+      if Rails.configuration.x.destroy_pii_immediately
+        errors.add(:base, pii.message)
+        false
+      else
+        self.scan_event = self.scan_event.to_a.push("Failed PII Check on #{Time.now.strftime('%d/%m/%Y %H:%M')}, file embargoed")
+        self.read_groups = ['private']
+        PiiMailer.embargo_file(self.depositor, self.content.original_name).deliver_later
+        true
+      end
+    else
+      self.scan_event = self.scan_event.to_a.push("Passed PII check on #{Time.now.strftime('%d/%m/%Y %H:%M')}")
+      true
+    end
   end
 
-  property :virus_scan_event, predicate: ::RDF::DC.provenance
-  property :pii_scan_event, predicate: ::RDF::DC.provenance
+  def ondemand_detect_pii
+    begin
+      bulk_extractor_scan
+    rescue Etdplus::PiiFoundError => pii
+      logger.warn(pii.message)
+      if Rails.configuration.x.destroy_pii_immediately
+        Sufia::GenericFile::Actor.new(self, self.depositor).destroy
+        PiiMailer.destroy_file(self.depositor, self.filename).deliver_later
+        false
+      else
+        self.scan_event = self.scan_event.to_a.push("Failed PII Check on #{Time.now.strftime('%d/%m/%Y %H:%M')}, file embargoed")
+        self.read_groups = ['private']
+        PiiMailer.embargo_file(self.depositor, self.filename).deliver_later
+        save
+      end
+    else
+      self.scan_event = self.scan_event.to_a.push("Passed PII check on #{Time.now.strftime('%d/%m/%Y %H:%M')}")
+      save
+    end
+  end
 
   def bulk_extractor_scan
     found_pii = []
+    file_path = local_path_for_content
     Dir.mktmpdir do |dir|
-      file = Tempfile.new(['', '.txt'])
-      file.write append_metadata.gsub /\s+/, ' '
-      file.close
-      cmd_string = "bulk_extractor -o #{dir}/bulk_extractor #{file.path}"
+      cmd_string = "bulk_extractor -o #{dir}/bulk_extractor #{file_path}"
       Open3.popen3(cmd_string)
       sleep(1)
       found_pii = Dir.foreach("#{dir}/bulk_extractor").select { |entry|
         (entry == "ccn.txt" || entry == "pii.txt") && File.size("#{dir}/bulk_extractor/#{entry}") > 0
       }
     end
-    #depositor = User.find_by_user_key(self.depositor)
-    #gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
-    if found_pii.empty?
-      #gf_actor.update_metadata({pii_scan_event: ['No pii detected']}, visibility)
-      self.update_attributes({pii_scan_event: ['No pii detected']})
-      true
-    elsif found_pii.length == 2
-      message = 'Found SSN and Credit Card Number'
-    else
-      message = (found_pii[0] == "pii.txt" ? "Found SSN" : "Found Credit Card Number")
+    unless found_pii.empty?
+      message = "PII found in #{file_path}: "
+      if found_pii.length == 2
+        message += "SSN and Credit Card Number"
+      else
+        message += (found_pii[0] == "pii.txt" ? "SSN" : "Credit Card Number")
+      end
+      message += ". File cannot be uploaded into the repository."
+      raise Etdplus::PiiFoundError, message
     end
-    logger.warn(message)
-    errors.add(:base, message)
-    PiiMailer.destroy_file(id).deliver_later
-    #gf_actor.destroy
-    self.destroy
-    false
   end
 
   private
