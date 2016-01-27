@@ -2,7 +2,11 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.4'
+gem 'rails', '4.2.5.1'
+# Hold the sprockets-rails gem at its older version because the current version selected by Bundler
+# when updating the Rails gem to 4.2.5 causes Sufia to break.  Hopefully, we will be able to remove
+# the following line at some point in the future.  For now we need it.
+gem 'sprockets-rails', '~> 2.3.3'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use SCSS for stylesheets
