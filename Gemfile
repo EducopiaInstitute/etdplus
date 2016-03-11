@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.5.1'
+gem 'rails', '4.2.5.2'
 # Hold the sprockets-rails gem at its older version because the current version selected by Bundler
 # when updating the Rails gem to 4.2.5 causes Sufia to break.  Hopefully, we will be able to remove
 # the following line at some point in the future.  For now we need it.
