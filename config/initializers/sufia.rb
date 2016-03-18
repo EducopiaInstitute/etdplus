@@ -86,7 +86,9 @@ Sufia.config do |config|
   config.analytics = false
 
   # Specify a Google Analytics tracking ID to gather usage statistics
-  # config.google_analytics_id = 'UA-99999999-1'
+  unless Rails.application.secrets['google_analytics_id'].nil?
+    config.google_analytics_id = Rails.application.secrets['google_analytics_id']
+  end
 
   # Specify a date you wish to start collecting Google Analytic statistics for.
   # config.analytic_start_date = DateTime.new(2014,9,10)
@@ -118,7 +120,7 @@ Sufia.config do |config|
   # config.redis_namespace = "sufia"
 
   # Specify the path to the file characterization tool:
-  # config.fits_path = "fits.sh"
+  config.fits_path = "/opt/fits/fits.sh"
 
   # Specify how many seconds back from the current time that we should show by default of the user's activity on the user's dashboard
   # config.activity_to_show_default_seconds_since_now = 24*60*60
