@@ -241,6 +241,17 @@ class CollectionsController < ApplicationController
     end
   end
 
+  protected
+    def collection_params
+      form_class.model_attributes(
+        params.require(:collection).permit(:title, :description, :members, :rights,
+                                           part_of: [], contributor: [], creator: [],
+                                           publisher: [], date_created: [], subject: [],
+                                           language: [], resource_type: [], identifier: [],
+                                           based_near: [], tag: [], related_url: [])
+        )
+    end
+
   private
 
     def authorize_export(collection)
