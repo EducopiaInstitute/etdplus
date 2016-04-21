@@ -24,6 +24,10 @@ Etdplus::Application.config.x.destroy_viruses_immediately = true
 # file will be forced to a private visibility.
 Etdplus::Application.config.x.destroy_pii_immediately = true
 
+# If a ill-formatted xml file is detected, by default the package will still be exported. If this is true, the
+# package will not be exported.
+Etdplus::Application.config.x.stop_xml_export = false
+
 # Zaru sanitizes filenames. These options are passed to it when a file is saved.
 Etdplus::Application.config.x.filename_options = {
   # The options provided by default below mimic the way detox works. (http://detox.sourceforge.net/)
