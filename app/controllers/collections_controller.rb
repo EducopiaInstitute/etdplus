@@ -1,6 +1,6 @@
 class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
-  skip_load_and_authorize_resource :only => [:export_bagit]
+  skip_load_and_authorize_resource :only => [:export_bagit, :bagit_download]
 
   def create_mets(collection)
   	namespaces = {"xmlns:mets" => "http://www.loc.gov/METS/",
@@ -183,9 +183,10 @@ class CollectionsController < ApplicationController
     collection_id = params[:id]
     collection = Collection.find(collection_id)
     collection_attributes = collection.title
+    @bag_file = collection_id + '_bagit.tar.gz'
 
     unless authorize_export(collection)
-      render status: 401
+      render status: 401 and return
     end
 
     # create temp folder
@@ -210,12 +211,12 @@ class CollectionsController < ApplicationController
 
         # virus scan
         if fileObj.detect_viruses
-          render status: 500
+          render status: 500 and return
         end
 
         # Pii scan
         #if fileObj.bulk_extractor_scan
-        #  render status: 500
+        #  render status: 500 and return
         #end
 
         # append Fits info
@@ -236,8 +237,17 @@ class CollectionsController < ApplicationController
         bag.manifest!
       end
 
-      system("tar -zcvf #{collection_id}_bagit.tar.gz -C #{dir}/#{collection_id}_bag .")
-      send_file collection_id +'_bagit.tar.gz'
+      system("tar -zcvf #{@bag_file} -C #{dir}/#{collection_id}_bag .")
+
+      send_file @bag_file
+    end
+  end
+
+  def bagit_download
+    @collection = Collection.find(params[:id])
+
+    unless authorize_export(@collection)
+      render status: 401 and return
     end
   end
 
