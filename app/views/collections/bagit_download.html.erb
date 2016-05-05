@@ -1,0 +1,11 @@
+<div>
+  <h3>Your download will start shortly.</h3>
+  If it does not start, <%= link_to 'click here.', export_bagit_path(@collection) %><br />
+</div>
+<%= render 'static/deposit_plan' %>
+<div>
+  <iframe hidden=true src=<%= url_for(export_bagit_path(@collection)) %>></iframe>
+</div>
+<div>
+  <%= link_to 'Back to your collection.', :back %><br />
+</div>
