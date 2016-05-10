@@ -210,14 +210,14 @@ class CollectionsController < ApplicationController
         end
 
         # virus scan
-        if fileObj.detect_viruses
-          render status: 500 and return
+        unless fileObj.ondemand_detect_viruses
+          render status: 500
         end
 
         # Pii scan
-        #if fileObj.bulk_extractor_scan
-        #  render status: 500 and return
-        #end
+        unless fileObj.ondemand_detect_pii
+          render status: 500
+        end
 
         # append Fits info
         metsxml = insert_supplement(metsxml, fileObj)

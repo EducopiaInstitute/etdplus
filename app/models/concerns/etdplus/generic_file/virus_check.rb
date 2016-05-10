@@ -10,38 +10,43 @@ module Etdplus
       # Default behavior is to raise a validation error and halt the save if a virus is found
       def detect_viruses
         return unless content.changed?
-        #depositor = User.find_by_user_key(self.depositor)
-        #gf_actor = Sufia::GenericFile::Actor.new(self, depositor)
-        Sufia::GenericFile::Actor.virus_check(local_path_for_content)
-        #gf_actor.update_metadata({virus_scan_event: ['No viruses detected']}, visibility)
-        true
-      rescue Sufia::VirusFoundError => virus
-        logger.warn(virus.message)
-        errors.add(:base, virus.message)
-        if Rails.configuration.x.destroy_viruses_immediately
-          VirusScanMailer.destroy_file(generic_file.id).deliver_later
-          false
+        begin
+          Sufia::GenericFile::Actor.virus_check(local_path_for_content)
+        rescue Sufia::VirusFoundError => virus
+          if Rails.configuration.x.destroy_viruses_immediately
+            errors.add(:base, virus.message)
+            false
+          else
+            self.scan_event = self.scan_event.to_a.push("Failed Virus Check on #{Time.now.strftime('%d/%m/%Y %H:%M')}, file embargoed")
+            self.read_groups = ['private']
+            VirusScanMailer.embargo_file(self.depositor, self.content.original_name).deliver_later
+            true
+          end
         else
-          #gf_actor.update_metadata({virus_scan_event: ['Virus detected, file embargoed'], read_groups: ['private']}, 'restricted')
-          VirusScanMailer.embargo_file(generic_file.id).deliver_later
+          self.scan_event = self.scan_event.to_a.push("Passed Virus Check on #{Time.now.strftime('%d/%m/%Y %H:%M')}")
           true
         end
       end
 
-      private
-
-        def local_path_for_content
-          if content.content.respond_to?(:path)
-            content.content.path
+      def ondemand_detect_viruses
+        begin
+          Sufia::GenericFile::Actor.virus_check(local_path_for_content)
+        rescue Sufia::VirusFoundError => virus
+          if Rails.configuration.x.destroy_viruses_immediately
+            Sufia::GenericFile::Actor.new(self, self.depositor).destroy
+            VirusScanMailer.destroy_file(self.depositor, self.filename).deliver_later
+            false
           else
-            Tempfile.open('') do |t|
-              t.binmode
-              t.write(content.content)
-              t.close
-              t.path
-            end
+            self.scan_event = self.scan_event.to_a.push("Failed Virus Check on #{Time.now.strftime('%d/%m/%Y %H:%M')}, file embargoed")
+            self.read_groups = ['private']
+            VirusScanMailer.embargo_file(self.depositor, self.filename).deliver_later
+            save
           end
+        else
+          self.scan_event = self.scan_event.to_a.push("Passed Virus Check on #{Time.now.strftime('%d/%m/%Y %H:%M')}")
+          save
         end
+      end
     end
   end
 end

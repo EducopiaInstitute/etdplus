@@ -6,12 +6,12 @@
   <body>
     <h3>Hello <%= @user.name %>,</h3>
     <p>
-      We are sorry to inform you that Personally Identifiable Information was detected in one of your files uploaded to ETDPlus. (<%= @url %>)
+      We are sorry to inform you that Personally Identifiable Information (PII) was detected in one of your files uploaded to ETDPlus.
       It is our policy to delete files that do not pass a PII check.
       The file in question was named <%= @file_name %>.
     </p>
     <p>
-    For further information, please contact us through our contact form, at <%= @url %>/contact
+    For further information, please contact us through our contact form, at <%= root_url %>contact
     </p>
     <p>The ETDPlus Team</p>
   </body>
