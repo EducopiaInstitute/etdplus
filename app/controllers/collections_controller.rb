@@ -282,7 +282,9 @@ class CollectionsController < ApplicationController
           metsxml = insert_event(metsxml, "event" + eventnum.to_s, filename, Time.now.strftime("%m/%d/%Y %H:%M"), "Passed PII check", "successful", "Bulk extractor", "1.5.5") 
           eventnum += 1
         end
-
+        if !fileObj.ondemand_validate_xml && Rails.configuration.x.stop_xml_export
+          render status: 500
+        end
         # append Fits info
         metsxml = insert_supplement(metsxml, fileObj)
         metsxml = insert_fitsinfo(metsxml, fileObj.content.extract_metadata, fileObj)

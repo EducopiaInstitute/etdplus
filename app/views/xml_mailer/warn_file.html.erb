@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h3>Hello <%= @user.name %>,</h3>
+    <p>
+      We are sorry to inform you that bad xml markup was detected in one of your files uploaded to ETDPlus.
+      The potential problems are: <%= @parsing_errors %>.
+      The file in question was named <%= @file_name %>.
+    </p>
+    <p>
+    For further information, please contact us through our contact form, at <%= root_url %>contact
+    </p>
+    <p>The ETDPlus Team</p>
+  </body>
+</html>
