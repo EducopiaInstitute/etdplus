@@ -8,6 +8,22 @@ class GenericFile < ActiveFedora::Base
   validate :detect_pii
   property :scan_event, predicate: ::RDF::DC.provenance
 
+  def ondemand_validate_xml
+    return true unless self.mime_type == "text/xml"
+    bad_doc = Nokogiri::XML(content.content)
+    parsing_errors = bad_doc.errors
+    unless parsing_errors.empty?
+      logger.warn(parsing_errors * ", ")
+      XmlMailer.warn_file(self.depositor, self.filename, parsing_errors * ", ").deliver_later
+      self.scan_event = self.scan_event.to_a.push("Bad-formed XML detected on #{Time.now.strftime('%d/%m/%Y %H:%M')}")
+      save
+      false
+    else
+      self.scan_event = self.scan_event.to_a.push("Passed XML check on #{Time.now.strftime('%d/%m/%Y %H:%M')}")
+      save
+    end
+  end
+
   def detect_pii
     return unless content.changed?
     begin
