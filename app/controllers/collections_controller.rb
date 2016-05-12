@@ -271,7 +271,8 @@ class CollectionsController < ApplicationController
         unless fileObj.ondemand_detect_viruses
           render status: 500
         else
-          metsxml = insert_event(metsxml, "event" + eventnum.to_s, filename, Time.now.strftime("%m/%d/%Y %H:%M"), "Passed Virus check", "successful", "ClamAV", "0.98.7")
+          toolinfo = Rails.configuration.x.clamav_version.split(/[\s\/']/)
+          metsxml = insert_event(metsxml, "event" + eventnum.to_s, filename, Time.now.strftime("%m/%d/%Y %H:%M"), Rails.configuration.x.virus_pass_message, Rails.configuration.x.successful_message, toolinfo[0], toolinfo[1])
           eventnum += 1
         end
 
@@ -279,12 +280,20 @@ class CollectionsController < ApplicationController
         unless fileObj.ondemand_detect_pii
           render status: 500
         else
-          metsxml = insert_event(metsxml, "event" + eventnum.to_s, filename, Time.now.strftime("%m/%d/%Y %H:%M"), "Passed PII check", "successful", "Bulk extractor", "1.5.5") 
+          toolinfo = Rails.configuration.x.bulk_extractor_version.split(" ")
+          metsxml = insert_event(metsxml, "event" + eventnum.to_s, filename, Time.now.strftime("%m/%d/%Y %H:%M"), Rails.configuration.x.pii_pass_message, Rails.configuration.x.successful_message, toolinfo[0], toolinfo[1]) 
           eventnum += 1
         end
+
+        # XML validate scan
         if !fileObj.ondemand_validate_xml && Rails.configuration.x.stop_xml_export
           render status: 500
+        else
+          toolinfo = Rails.configuration.x.nokogiri_version.split(":")
+          metsxml = insert_event(metsxml, "event" + eventnum.to_s, filename, Time.now.strftime("%m/%d/%Y %H:%M"), Rails.configuration.x.xml_pass_message, Rails.configuration.x.successful_message, toolinfo[0], toolinfo[1].strip!) 
+          eventnum += 1
         end
+
         # append Fits info
         metsxml = insert_supplement(metsxml, fileObj)
         metsxml = insert_fitsinfo(metsxml, fileObj.content.extract_metadata, fileObj)
