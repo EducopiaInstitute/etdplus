@@ -41,3 +41,11 @@ Etdplus::Application.config.x.filename_options = {
 Etdplus::Application.config.x.ip_whitelist = IPAddr.new('127.0.0.1')
 # Addresses can be IPv4 or IPv6, and can include range masks.
 # Eg: '3ffe:505:2::1' or '192.168.2.0/24'
+
+# Tools version
+Etdplus::Application.config.x.clamav_version = `clamscan -V`
+# e.g. ClamAV 0.98.7/21532/Thu May 12 12:56:01 2016
+Etdplus::Application.config.x.bulk_extractor_version = `bulk_extractor -V`
+# e.g. bulk_extractor 1.5.5
+Etdplus::Application.config.x.nokogiri_version = `nokogiri -v | grep -m 1 nokogiri`
+# e.g. nokogiri: 1.6.7.2
