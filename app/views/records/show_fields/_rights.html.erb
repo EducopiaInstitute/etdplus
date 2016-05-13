@@ -1,3 +1,8 @@
-<% r = record.rights %>
-<%=link_to_field('rights',r, Sufia.config.cc_licenses_reverse[r])%> <%= iconify_auto_link(r,false) %><br />
-
+<% if controller_name == 'collections' %> 
+  <% r = record.rights %>
+  <%=link_to_field('rights',r, Sufia.config.cc_licenses_reverse[r])%> <%= iconify_auto_link(r,false) %><br />
+<% else %>
+  <% record.rights.each do |r| %>
+    <%=link_to_field('rights',r, Sufia.config.cc_licenses_reverse[r])%> <%= iconify_auto_link(r,false) %><br />
+  <% end %>
+<% end %>
