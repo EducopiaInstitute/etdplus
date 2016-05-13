@@ -24,7 +24,7 @@ Etdplus::Application.config.x.destroy_viruses_immediately = true
 # file will be forced to a private visibility.
 Etdplus::Application.config.x.destroy_pii_immediately = true
 
-# If a ill-formatted xml file is detected, by default the package will still be exported. If this is true, the
+# If an ill-formatted xml file is detected, by default the package will still be exported. If this is true, the
 # package will not be exported.
 Etdplus::Application.config.x.stop_xml_export = false
 
@@ -49,3 +49,12 @@ Etdplus::Application.config.x.bulk_extractor_version = `bulk_extractor -V`
 # e.g. bulk_extractor 1.5.5
 Etdplus::Application.config.x.nokogiri_version = `nokogiri -v | grep -m 1 nokogiri`
 # e.g. nokogiri: 1.6.7.2
+
+# default email to send virus checking result
+Etdplus::Application.config.x.from_email_virus = 'no-reply@localhost'
+# default email to send PII checking result
+Etdplus::Application.config.x.from_email_pii = 'no-reply@localhost'
+# default email to send XML validation result
+Etdplus::Application.config.x.from_email_xml = 'no-reply@localhost'
+# default email to send the contact form
+Etdplus::Application.config.x.from_email_contact = 'root@localhost'

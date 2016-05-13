@@ -1,0 +1,33 @@
+en:
+  contact_form:
+    name: 'default name on contact form'
+    email: 'default email on contact form'
+    phone: 'default phone on contact form'
+    twitter: 'default twitter on contact form'
+    room_number: 'default room number on contact form'
+    hours: 'default operating hours on contact form'
+    other_info: 'Other information on contact form'
+  virus_mail:
+    name: 'default name in virus mail'
+    email: 'default email in virus mail'
+    phone: 'default phone in virus mail'
+    twitter: 'default twitter in virus mail'
+    room_number: 'default room number in virus mail'
+    hours: 'default operating hours in virus mail'
+    other_info: 'Other information in virus mail'
+  pii_mail:
+    name: 'default name in pii mail'
+    email: 'default email in pii mail'
+    phone: 'default phone in pii mail'
+    twitter: 'default twitter in pii mail'
+    room_number: 'default room number in pii mail'
+    hours: 'default operating hours in pii mail'
+    other_info: 'Other information in pii mail'
+  xml_mail:
+    name: 'default name in xml mail'
+    email: 'default email in xml mail'
+    phone: 'default phone in xml mail'
+    twitter: 'default twitter in xml mail'
+    room_number: 'default room number in xml mail'
+    hours: 'default operating hours in xml mail'
+    other_info: 'Other information in xml mail'
