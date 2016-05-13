@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151021163247) do
+ActiveRecord::Schema.define(version: 20160512184411) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "bookmarks", force: :cascade do |t|
     t.integer  "user_id",       null: false
@@ -23,7 +26,7 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.string   "document_type"
   end
 
-  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id"
+  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id", using: :btree
 
   create_table "checksum_audit_logs", force: :cascade do |t|
     t.string   "generic_file_id"
@@ -36,7 +39,7 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "checksum_audit_logs", ["generic_file_id", "dsid"], name: "by_pid_and_dsid"
+  add_index "checksum_audit_logs", ["generic_file_id", "dsid"], name: "by_pid_and_dsid", using: :btree
 
   create_table "content_blocks", force: :cascade do |t|
     t.string   "name"
@@ -51,15 +54,15 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.string "term"
   end
 
-  add_index "domain_terms", ["model", "term"], name: "terms_by_model_and_term"
+  add_index "domain_terms", ["model", "term"], name: "terms_by_model_and_term", using: :btree
 
   create_table "domain_terms_local_authorities", id: false, force: :cascade do |t|
     t.integer "domain_term_id"
     t.integer "local_authority_id"
   end
 
-  add_index "domain_terms_local_authorities", ["domain_term_id", "local_authority_id"], name: "dtla_by_ids2"
-  add_index "domain_terms_local_authorities", ["local_authority_id", "domain_term_id"], name: "dtla_by_ids1"
+  add_index "domain_terms_local_authorities", ["domain_term_id", "local_authority_id"], name: "dtla_by_ids2", using: :btree
+  add_index "domain_terms_local_authorities", ["local_authority_id", "domain_term_id"], name: "dtla_by_ids1", using: :btree
 
   create_table "featured_works", force: :cascade do |t|
     t.integer  "order",           default: 5
@@ -68,8 +71,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "featured_works", ["generic_file_id"], name: "index_featured_works_on_generic_file_id"
-  add_index "featured_works", ["order"], name: "index_featured_works_on_order"
+  add_index "featured_works", ["generic_file_id"], name: "index_featured_works_on_generic_file_id", using: :btree
+  add_index "featured_works", ["order"], name: "index_featured_works_on_order", using: :btree
 
   create_table "file_download_stats", force: :cascade do |t|
     t.datetime "date"
@@ -80,8 +83,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.integer  "user_id"
   end
 
-  add_index "file_download_stats", ["file_id"], name: "index_file_download_stats_on_file_id"
-  add_index "file_download_stats", ["user_id"], name: "index_file_download_stats_on_user_id"
+  add_index "file_download_stats", ["file_id"], name: "index_file_download_stats_on_file_id", using: :btree
+  add_index "file_download_stats", ["user_id"], name: "index_file_download_stats_on_user_id", using: :btree
 
   create_table "file_view_stats", force: :cascade do |t|
     t.datetime "date"
@@ -92,8 +95,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.integer  "user_id"
   end
 
-  add_index "file_view_stats", ["file_id"], name: "index_file_view_stats_on_file_id"
-  add_index "file_view_stats", ["user_id"], name: "index_file_view_stats_on_user_id"
+  add_index "file_view_stats", ["file_id"], name: "index_file_view_stats_on_file_id", using: :btree
+  add_index "file_view_stats", ["user_id"], name: "index_file_view_stats_on_user_id", using: :btree
 
   create_table "follows", force: :cascade do |t|
     t.integer  "followable_id",                   null: false
@@ -105,8 +108,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "follows", ["followable_id", "followable_type"], name: "fk_followables"
-  add_index "follows", ["follower_id", "follower_type"], name: "fk_follows"
+  add_index "follows", ["followable_id", "followable_type"], name: "fk_followables", using: :btree
+  add_index "follows", ["follower_id", "follower_type"], name: "fk_follows", using: :btree
 
   create_table "local_authorities", force: :cascade do |t|
     t.string "name"
@@ -118,8 +121,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.string  "uri"
   end
 
-  add_index "local_authority_entries", ["local_authority_id", "label"], name: "entries_by_term_and_label"
-  add_index "local_authority_entries", ["local_authority_id", "uri"], name: "entries_by_term_and_uri"
+  add_index "local_authority_entries", ["local_authority_id", "label"], name: "entries_by_term_and_label", using: :btree
+  add_index "local_authority_entries", ["local_authority_id", "uri"], name: "entries_by_term_and_uri", using: :btree
 
   create_table "mailboxer_conversation_opt_outs", force: :cascade do |t|
     t.integer "unsubscriber_id"
@@ -127,8 +130,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.integer "conversation_id"
   end
 
-  add_index "mailboxer_conversation_opt_outs", ["conversation_id"], name: "index_mailboxer_conversation_opt_outs_on_conversation_id"
-  add_index "mailboxer_conversation_opt_outs", ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type"
+  add_index "mailboxer_conversation_opt_outs", ["conversation_id"], name: "index_mailboxer_conversation_opt_outs_on_conversation_id", using: :btree
+  add_index "mailboxer_conversation_opt_outs", ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type", using: :btree
 
   create_table "mailboxer_conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
@@ -154,10 +157,10 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "expires"
   end
 
-  add_index "mailboxer_notifications", ["conversation_id"], name: "index_mailboxer_notifications_on_conversation_id"
-  add_index "mailboxer_notifications", ["notified_object_id", "notified_object_type"], name: "index_mailboxer_notifications_on_notified_object_id_and_type"
-  add_index "mailboxer_notifications", ["sender_id", "sender_type"], name: "index_mailboxer_notifications_on_sender_id_and_sender_type"
-  add_index "mailboxer_notifications", ["type"], name: "index_mailboxer_notifications_on_type"
+  add_index "mailboxer_notifications", ["conversation_id"], name: "index_mailboxer_notifications_on_conversation_id", using: :btree
+  add_index "mailboxer_notifications", ["notified_object_id", "notified_object_type"], name: "index_mailboxer_notifications_on_notified_object_id_and_type", using: :btree
+  add_index "mailboxer_notifications", ["sender_id", "sender_type"], name: "index_mailboxer_notifications_on_sender_id_and_sender_type", using: :btree
+  add_index "mailboxer_notifications", ["type"], name: "index_mailboxer_notifications_on_type", using: :btree
 
   create_table "mailboxer_receipts", force: :cascade do |t|
     t.integer  "receiver_id"
@@ -171,8 +174,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at",                                 null: false
   end
 
-  add_index "mailboxer_receipts", ["notification_id"], name: "index_mailboxer_receipts_on_notification_id"
-  add_index "mailboxer_receipts", ["receiver_id", "receiver_type"], name: "index_mailboxer_receipts_on_receiver_id_and_receiver_type"
+  add_index "mailboxer_receipts", ["notification_id"], name: "index_mailboxer_receipts_on_notification_id", using: :btree
+  add_index "mailboxer_receipts", ["receiver_id", "receiver_type"], name: "index_mailboxer_receipts_on_receiver_id_and_receiver_type", using: :btree
 
   create_table "proxy_deposit_requests", force: :cascade do |t|
     t.string   "generic_file_id",                       null: false
@@ -186,8 +189,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "proxy_deposit_requests", ["receiving_user_id"], name: "index_proxy_deposit_requests_on_receiving_user_id"
-  add_index "proxy_deposit_requests", ["sending_user_id"], name: "index_proxy_deposit_requests_on_sending_user_id"
+  add_index "proxy_deposit_requests", ["receiving_user_id"], name: "index_proxy_deposit_requests_on_receiving_user_id", using: :btree
+  add_index "proxy_deposit_requests", ["sending_user_id"], name: "index_proxy_deposit_requests_on_sending_user_id", using: :btree
 
   create_table "proxy_deposit_rights", force: :cascade do |t|
     t.integer  "grantor_id"
@@ -196,8 +199,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "proxy_deposit_rights", ["grantee_id"], name: "index_proxy_deposit_rights_on_grantee_id"
-  add_index "proxy_deposit_rights", ["grantor_id"], name: "index_proxy_deposit_rights_on_grantor_id"
+  add_index "proxy_deposit_rights", ["grantee_id"], name: "index_proxy_deposit_rights_on_grantee_id", using: :btree
+  add_index "proxy_deposit_rights", ["grantor_id"], name: "index_proxy_deposit_rights_on_grantor_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string "name"
@@ -208,8 +211,8 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.integer "user_id"
   end
 
-  add_index "roles_users", ["role_id", "user_id"], name: "index_roles_users_on_role_id_and_user_id"
-  add_index "roles_users", ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id"
+  add_index "roles_users", ["role_id", "user_id"], name: "index_roles_users_on_role_id_and_user_id", using: :btree
+  add_index "roles_users", ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id", using: :btree
 
   create_table "searches", force: :cascade do |t|
     t.text     "query_params"
@@ -219,7 +222,7 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "searches", ["user_id"], name: "index_searches_on_user_id"
+  add_index "searches", ["user_id"], name: "index_searches_on_user_id", using: :btree
 
   create_table "single_use_links", force: :cascade do |t|
     t.string   "downloadKey"
@@ -236,7 +239,7 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.string "url"
   end
 
-  add_index "subject_local_authority_entries", ["lowerLabel"], name: "entries_by_lower_label"
+  add_index "subject_local_authority_entries", ["lowerLabel"], name: "entries_by_lower_label", using: :btree
 
   create_table "tinymce_assets", force: :cascade do |t|
     t.string   "file"
@@ -260,7 +263,7 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "updated_at"
   end
 
-  add_index "user_stats", ["user_id"], name: "index_user_stats_on_user_id"
+  add_index "user_stats", ["user_id"], name: "index_user_stats_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "",    null: false
@@ -297,10 +300,12 @@ ActiveRecord::Schema.define(version: 20151021163247) do
     t.datetime "groups_last_update"
     t.string   "linkedin_handle"
     t.string   "orcid"
+    t.string   "username"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "version_committers", force: :cascade do |t|
     t.string   "obj_id"
