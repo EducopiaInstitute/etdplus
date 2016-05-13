@@ -1,4 +1,5 @@
 class XmlMailer < ApplicationMailer
+  default from: Rails.configuration.x.from_email_xml
   default subject: 'Bad-formed XML detected in upload to ETDPlus'
 
   def warn_file(depositor, file_name, error_msg)

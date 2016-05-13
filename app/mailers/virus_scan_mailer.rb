@@ -1,4 +1,5 @@
 class VirusScanMailer < ApplicationMailer
+  default from: Rails.configuration.x.from_email_virus
   default subject: 'Virus detected in upload to ETDPlus'
 
   def destroy_file(depositor, file_name)

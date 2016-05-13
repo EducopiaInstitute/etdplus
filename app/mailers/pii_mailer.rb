@@ -1,4 +1,5 @@
 class PiiMailer < ApplicationMailer
+  default from: Rails.configuration.x.from_email_pii
   default subject: 'PII detected in upload to ETDPlus'
 
   def destroy_file(depositor, file_name)
