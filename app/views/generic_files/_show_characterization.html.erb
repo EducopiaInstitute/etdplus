@@ -42,7 +42,7 @@
     <% else %>
       <% if section_name == "Metadata" %>
         <% section = section.element_children[0] %>
-        <% section_name += ": #{section.name.capitalize}" %>
+        <% section_name += ": #{section.name.capitalize}" if section%>
       <% end %>
       <tr>
         <th></th>
