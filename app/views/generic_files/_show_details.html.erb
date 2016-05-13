@@ -39,7 +39,12 @@
                   <%= render partial: "generic_files/extra_fields_modal", locals: {name: term, values: values, start: Sufia.config.fits_message_length}%>
               <% end %>
           <% else %>
-              <%= "#{label}: #{values.truncate(250)}" %><br />
+              <%= "#{label}: #{values.truncate(250)}" %>
+              <% if label == "Mime type" %>
+                <span class='color-box' style='background-color: <%= @file_feedback[0] %>'></span>
+                <%= link_to @file_feedback[1], file_feedback_path %>
+              <% end %>
+              <br />
           <% end %>
         </div>
     <% end %>
