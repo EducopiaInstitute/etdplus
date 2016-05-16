@@ -19,10 +19,16 @@ class Ability
     if current_user.admin?
       can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
     end
+
+    alias_action :export_bagit, :bagit_download, :to => :etdplus_collection
+
+    can :etdplus_collection, Collection, :depositor => current_user.user_key
+    can :manage, :all if current_user.admin?
   end
 
   def generic_file_abilities
     can :view_share_work, [GenericFile]
     can :create, [GenericFile, Collection] if registered_user?
   end
+
 end

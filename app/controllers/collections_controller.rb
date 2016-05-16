@@ -1,6 +1,5 @@
 class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
-  skip_load_and_authorize_resource :only => [:export_bagit, :bagit_download]
 
   def create_mets(collection, namespaces)
   
