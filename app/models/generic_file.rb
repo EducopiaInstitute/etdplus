@@ -89,6 +89,10 @@ class GenericFile < ActiveFedora::Base
     end
   end
 
+  def main_etd_pdf?
+    (resource_type.include? "ProQuest Main ETD PDF") && self.pdf?
+  end
+
   private
 
     def sanitize_filenames
