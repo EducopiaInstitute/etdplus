@@ -1,0 +1,8 @@
+<% if controller_name == 'collections' %>  
+  <%= f.input :resource_type, as: :select_with_help, collection: Sufia.config.resource_types,
+    input_html: { class: 'form-control', multiple: true } %>
+<% else %>
+  <%= f.input :resource_type, as: :select_with_help, collection: Sufia.config.file_resource_types,
+    input_html: { class: 'form-control', multiple: true } %>
+<% end %>
+
