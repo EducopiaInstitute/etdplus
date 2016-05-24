@@ -22,30 +22,16 @@ Sufia.config do |config|
 
   config.cc_licenses_reverse = Hash[*config.cc_licenses.to_a.flatten.reverse]
 
-  config.resource_types = {
-    "Article" => "Article",
-    "Audio" => "Audio",
-    "Book" => "Book",
-    "Capstone Project" => "Capstone Project",
-    "Conference Proceeding" => "Conference Proceeding",
-    "Dataset" => "Dataset",
-    "Dissertation" => "Dissertation",
-    "Image" => "Image",
-    "Journal" => "Journal",
-    "Map or Cartographic Material" => "Map or Cartographic Material",
-    "Masters Thesis" => "Masters Thesis",
-    "Part of Book" => "Part of Book",
-    "Poster" => "Poster",
-    "Presentation" => "Presentation",
-    "Project" => "Project",
-    "Report" => "Report",
-    "Research Paper" => "Research Paper",
-    "Software or Program Code" => "Software or Program Code",
-    "Video" => "Video",
-    "Other" => "Other"
-  }
+  RESOURCE_TYPES = ["Article", "Audio", "Book", "Capstone Project", "Conference Proceeding",
+    "Dataset", "Dissertation", "Image", "Journal", "Map or Cartographic Material", "Masters Thesis",
+    "Part of Book", "Poster", "Presentation", "Project", "Report", "Research Paper", "Software or Program Code",
+    "Video", "Other"]
+  FILE_RESOURCE_TYPES = (RESOURCE_TYPES + ["ProQuest Main ETD PDF"]).sort
+  config.resource_types = Hash[RESOURCE_TYPES.map { |val| [val, val]}]
+  config.file_resource_types = Hash[FILE_RESOURCE_TYPES.map { |val| [val, val]}]
 
   config.resource_types_to_schema = {
+    "ProQuest Main ETD PDF" => "http://schema.org/CreativeWork/DigitalDocument/TextDigitalDocument",
     "Article" => "http://schema.org/Article",
     "Audio" => "http://schema.org/AudioObject",
     "Book" => "http://schema.org/Book",
