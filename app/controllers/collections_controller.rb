@@ -224,7 +224,7 @@ class CollectionsController < ApplicationController
     return metsdoc.to_xml
   end
 
-  def export_bagit
+  def export_proquest
     collection_id = params[:id]
     collection = Collection.find(collection_id)
     collection_attributes = collection.title
@@ -324,6 +324,74 @@ class CollectionsController < ApplicationController
     unless authorize_export(@collection)
       render status: 401 and return
     end
+  end
+
+  def export_bagit
+
+    collection_id = params[:id]
+    collection = Collection.find(collection_id)
+    @proquest_file = 'upload_name.zip'
+
+    unless authorize_export(collection)
+      render status: 401 and return
+    end
+
+    # create temp folder
+    Dir.mktmpdir do |dir|
+      # create ProQuest file
+
+      # ProQuest path
+      proquest_path = dir + "/" + collection_id + "/upload_name/"
+      proquest_media_path = proquest_path + "name_media/"
+
+      unless File.directory?(proquest_path)
+        FileUtils.mkdir_p(proquest_path)
+      end
+
+      unless File.directory?(proquest_media_path)
+        FileUtils.mkdir_p(proquest_media_path)
+      end
+      
+      collection.member_ids.each do |doc_id|
+        # get file and save to temp folder
+        fileObj = GenericFile.find(doc_id)
+        fileurl = fileObj.content.uri
+        filename = fileObj.label
+        open(dir + "/" + filename, 'wb') do |file|
+          file << open(fileurl).read
+        end
+
+        # Virus scan
+        unless fileObj.ondemand_detect_viruses
+          render status: 500
+        end
+
+        # PII scan
+        unless fileObj.ondemand_detect_pii
+          render status: 500
+        end
+
+        # XML validate scan
+        if !fileObj.ondemand_validate_xml && Rails.configuration.x.stop_xml_export
+          render status: 500
+        end
+
+        # add ProQuest main file to ProQuest path  
+        FileUtils.cp dir + "/" + filename, proquest_path
+        # add other files to ProQuest media path
+        FileUtils.cp dir + "/" + filename, proquest_media_path 
+
+      end
+
+      Dir.chdir(proquest_path) do
+        system("zip -r archive.zip -D *")
+      end
+
+      FileUtils.mv proquest_path + "/archive.zip", @proquest_file
+
+      send_file @proquest_file
+    end
+
   end
 
   protected
