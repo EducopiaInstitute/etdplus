@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   get 'deposit_plan', to: 'static#deposit_plan'
   get 'file_feedback', to: 'static#file_feedback'
+  get 'collections/:id/scan_viruses', to: 'collections#scan_viruses' , as: 'scan_viruses_collection'
   get 'collections/:id/download', to: 'collections#bagit_download' , as: 'bagit_download'
   get 'collections/:id/export_bagit', to: 'collections#export_bagit' , as: 'export_bagit'
   blacklight_for :catalog

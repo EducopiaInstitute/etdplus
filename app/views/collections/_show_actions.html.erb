@@ -3,6 +3,7 @@
   <% if can? :edit, @collection %>
       <span class="label label-default"><%= link_to "Edit", collections.edit_collection_path, title: "Edit this Collection" %></span> &nbsp;&nbsp;
       <span class="label label-default"><%= link_to "Add files",  sufia.dashboard_files_path, title: "Add files to this Collection" %></span> &nbsp;&nbsp;
+      <span class="label label-default"><%= link_to "Scan Viruses",  scan_viruses_collection_path, title: "Scan files in this collection for viruses" %></span> &nbsp;&nbsp;
       <span class="label label-default"><%= link_to "Download",  bagit_download_path(@collection), title: "Download this Collection" %></span>
   <%end %>
 </div>
