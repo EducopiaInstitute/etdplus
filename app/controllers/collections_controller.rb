@@ -376,12 +376,21 @@ class CollectionsController < ApplicationController
           render status: 500
         end
 
-        # add ProQuest main file to ProQuest path  
-        FileUtils.cp dir + "/" + filename, proquest_path
-        # add other files to ProQuest media path
-        FileUtils.cp dir + "/" + filename, proquest_media_path 
-
+        # add ProQuest main file to ProQuest path
+        if (fileObj.resource_type.include? "ProQuest Main ETD PDF")  
+          FileUtils.mv dir + "/" + filename, proquest_path
+        else
+          # add other files to ProQuest media path
+          FileUtils.mv dir + "/" + filename, proquest_media_path 
+        end
       end
+
+      pqfile = File.open("config/pqtemplate.xml", "rb")
+      pqcontents = pqfile.read
+
+      mets_filepath = "name.xml"
+      File.open(mets_filepath, 'w') { |file| file.write(pqcontents) }
+      FileUtils.mv mets_filepath, proquest_path
 
       Dir.chdir(proquest_path) do
         system("zip -r archive.zip -D *")
