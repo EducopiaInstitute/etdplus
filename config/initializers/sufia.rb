@@ -27,11 +27,13 @@ Sufia.config do |config|
     "Part of Book", "Poster", "Presentation", "Project", "Report", "Research Paper", "Software or Program Code",
     "Video", "Other"]
   FILE_RESOURCE_TYPES = (RESOURCE_TYPES + ["ProQuest Main ETD PDF"]).sort
-  config.resource_types = Hash[RESOURCE_TYPES.map { |val| [val, val]}]
-  config.file_resource_types = Hash[FILE_RESOURCE_TYPES.map { |val| [val, val]}]
+  COLLECTION_RESOURCE_TYPES = (RESOURCE_TYPES + ["ProQuest ETD"]).sort
+  config.file_resource_types = Hash[FILE_RESOURCE_TYPES.map { |val| [val, val] }]
+  config.collection_resource_types = Hash[COLLECTION_RESOURCE_TYPES.map { |val| [val, val] }]
 
   config.resource_types_to_schema = {
     "ProQuest Main ETD PDF" => "http://schema.org/CreativeWork/DigitalDocument/TextDigitalDocument",
+    "ProQuest ETD" => "http://schema.org/CreativeWork",
     "Article" => "http://schema.org/Article",
     "Audio" => "http://schema.org/AudioObject",
     "Book" => "http://schema.org/Book",
