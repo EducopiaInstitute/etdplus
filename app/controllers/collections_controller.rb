@@ -393,10 +393,10 @@ class CollectionsController < ApplicationController
       FileUtils.mv mets_filepath, proquest_path
 
       Dir.chdir(proquest_path) do
-        system("zip -r archive.zip -D *")
+        system("zip -r #{collection_id}_archive.zip -D *")
       end
 
-      FileUtils.mv proquest_path + "/archive.zip", @proquest_file
+      FileUtils.mv proquest_path + "/#{collection_id}_archive.zip", @proquest_file
 
       send_file @proquest_file
     end
