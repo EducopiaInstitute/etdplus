@@ -21,6 +21,19 @@ module EtdplusHelper
   def fits_identity_attributes(identity_element)
     identity_element.attribute_nodes.reject { |a| ["toolname", "toolversion"].include?(a.name) }
   end
+ 
+  def export_proquest_button(collection)
+    if collection.has_one_main_etd?
+      title = "Export this Collection as a ProQuest package"
+      disabled = false
+      name = "ProQuest Export"
+    else
+      title = "Should have exactly one ProQuest Main ETD PDF file"
+      disabled = true
+      name = '<span class="disabled btn btn-disabled">ProQuest Export</span>'.html_safe
+    end
+    link_to name, export_proquest_collection_path, title: title, disabled: disabled
+  end
 
 end
 

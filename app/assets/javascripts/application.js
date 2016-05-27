@@ -17,3 +17,4 @@
 //= require blacklight/blacklight
 
 //= require sufia
+//= require etdplus
