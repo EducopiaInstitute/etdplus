@@ -224,6 +224,10 @@ class CollectionsController < ApplicationController
     return metsdoc.to_xml
   end
 
+  def create_proquest_xml(pqjson)
+
+  end
+
   def export_proquest
     collection_id = params[:id]
     collection = Collection.find(collection_id)
@@ -330,6 +334,10 @@ class CollectionsController < ApplicationController
 
     collection_id = params[:id]
     collection = Collection.find(collection_id)
+
+    # get pqjson
+
+    # create proguest filename and validate that filename
     @proquest_file = 'upload_name.zip'
 
     unless authorize_export(collection)
@@ -338,7 +346,6 @@ class CollectionsController < ApplicationController
 
     # create temp folder
     Dir.mktmpdir do |dir|
-      # create ProQuest file
 
       # ProQuest path
       proquest_path = dir + "/" + collection_id + "/upload_name/"
@@ -385,6 +392,8 @@ class CollectionsController < ApplicationController
         end
       end
 
+      # create proquest xml 
+      # create_proquest_xml(pqjson)
       pqfile = File.open("config/pqtemplate.xml", "rb")
       pqcontents = pqfile.read
 
