@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get 'file_feedback', to: 'static#file_feedback'
   get 'collections/:id/download', to: 'collections#bagit_download' , as: 'bagit_download'
   get 'collections/:id/export_bagit', to: 'collections#export_bagit' , as: 'export_bagit'
+  get 'collections/:id/export_proquest', to: 'collections#export_proquest' , as: 'export_proquest_collection'
   blacklight_for :catalog
   devise_for :users
   mount Hydra::RoleManagement::Engine => '/'

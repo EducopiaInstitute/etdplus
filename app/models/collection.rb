@@ -15,9 +15,8 @@ class Collection < ActiveFedora::Base
     end
   end
 
-  private
-    def proquest_etd_collection?
-      self.resource_type.include? "ProQuest ETD"
-    end
+  def proquest_etd_collection?
+    self.resource_type.include? "ProQuest ETD"
+  end
 
 end
