@@ -335,10 +335,14 @@ class CollectionsController < ApplicationController
     collection_id = params[:id]
     collection = Collection.find(collection_id)
 
-    # get pqjson
+    # get pqjson and create filename
+    newfilename = "upload_lastname_firstname"
+
+    # validate filename
+    newfilename = Zaru.sanitize!(newfilename)
 
     # create proguest filename and validate that filename
-    @proquest_file = 'upload_name.zip'
+    @proquest_file = newfilename + ".zip"
 
     unless authorize_export(collection)
       render status: 401 and return
@@ -384,8 +388,10 @@ class CollectionsController < ApplicationController
         end
 
         # add ProQuest main file to ProQuest path
-        if (fileObj.resource_type.include? "ProQuest Main ETD PDF")  
-          FileUtils.mv dir + "/" + filename, proquest_path
+        if (fileObj.resource_type.include? "ProQuest Main ETD PDF")
+
+          # change main etd pdf filename 
+          FileUtils.mv dir + "/" + filename, proquest_path + newfilename + ".pdf"
         else
           # add other files to ProQuest media path
           FileUtils.mv dir + "/" + filename, proquest_media_path 
