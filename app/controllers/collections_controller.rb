@@ -1,6 +1,6 @@
 class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
-  skip_load_and_authorize_resource :only => [:export_bagit, :bagit_download]
+  skip_load_and_authorize_resource :only => [:export_bagit, :export_proquest, :bagit_download]
 
   def create_mets(collection, namespaces)
   
@@ -226,9 +226,162 @@ class CollectionsController < ApplicationController
 
   def create_proquest_xml(pqjson)
 
+    result = JSON.parse(pqjson)
+
+    doc = File.open("config/pqtemplate.xml") { |f| Nokogiri::XML(f) }
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_name').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_surname'
+          child.content = result["DISS_surname"]
+        when 'DISS_fname'
+          child.content = result["DISS_fname"]
+        when 'DISS_middle'
+          child.content = result["DISS_middle"]
+        when 'DISS_affiliation'
+          child.content = result["DISS_affiliation"]
+        when 'DISS_suffix'
+          child.content = result["DISS_suffix"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_contact').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_contact_effdt'
+          child.content = result["DISS_contact_effdt"]
+        when 'DISS_email'
+          child.content = result["DISS_email"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_contact/DISS_phone_fax').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_cntry_cd'
+          child.content = result["DISS_cntry_cd"]
+        when 'DISS_area_code'
+          child.content = result["DISS_area_code"]
+        when 'DISS_phone_num'
+          child.content = result["DISS_phone_num"]
+        when 'DISS_phone_ext'
+          child.content = result["DISS_phone_ext"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_contact/DISS_address').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_addrline'
+          child.content = result["DISS_addrline"]
+        when 'DISS_city'
+          child.content = result["DISS_city"]
+        when 'DISS_st'
+          child.content = result["DISS_st"]
+        when 'DISS_pcode'
+          child.content = result["DISS_pcode"]
+        when 'DISS_country'
+          child.content = result["DISS_country"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_title'
+          child.content = result["DISS_title"]
+        when 'DISS_degree'
+          child.content = result["DISS_degree"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_dates').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_comp_date'
+          child.content = result["DISS_comp_date"]
+        when 'DISS_accept_date'
+          child.content = result["DISS_accept_date"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_institution').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_inst_code'
+          child.content = result["DISS_inst_code"]
+        when 'DISS_inst_name'
+          child.content = result["DISS_inst_name"]
+        when 'DISS_inst_contact'
+          child.content = result["DISS_inst_contact"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_advisor/DISS_name').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_surname'
+          child.content = result["DISS_surname"]
+        when 'DISS_fname'
+          child.content = result["DISS_fname"]
+        when 'DISS_middle'
+          child.content = result["DISS_middle"]
+        when 'DISS_affiliation'
+          child.content = result["DISS_affiliation"]
+        when 'DISS_suffix'
+          child.content = result["DISS_suffix"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_content').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_abstract'
+
+          child.children.each do |newchild|
+            case newchild.name
+            when 'DISS_para'
+              newchild.content = result["DISS_para"]
+            end 
+          end
+
+        when 'DISS_binary'
+          child.content = result["DISS_binary"]
+        end
+      end
+
+    end
+
+    return doc.to_xml
   end
 
-  def export_proquest
+  def export_bagit
     collection_id = params[:id]
     collection = Collection.find(collection_id)
     collection_attributes = collection.title
@@ -330,7 +483,7 @@ class CollectionsController < ApplicationController
     end
   end
 
-  def export_bagit
+  def export_proquest
 
     collection_id = params[:id]
     collection = Collection.find(collection_id)
@@ -389,21 +542,21 @@ class CollectionsController < ApplicationController
 
         # add ProQuest main file to ProQuest path
         if (fileObj.resource_type.include? "ProQuest Main ETD PDF")
-
           # change main etd pdf filename 
           FileUtils.mv dir + "/" + filename, proquest_path + newfilename + ".pdf"
         else
           # add other files to ProQuest media path
           FileUtils.mv dir + "/" + filename, proquest_media_path 
         end
+
       end
 
       # create proquest xml 
-      # create_proquest_xml(pqjson)
-      pqfile = File.open("config/pqtemplate.xml", "rb")
-      pqcontents = pqfile.read
+      pqjson = '{"DISS_surname": "firstname","DISS_fname": "lastname", "DISS_contact_effdt": "07/30/2015","DISS_para": "abstract", "DISS_binary": "the.pdf"}'
 
-      mets_filepath = "name.xml"
+      pqcontents = create_proquest_xml(pqjson)
+
+      mets_filepath = newfilename + ".xml"
       File.open(mets_filepath, 'w') { |file| file.write(pqcontents) }
       FileUtils.mv mets_filepath, proquest_path
 
