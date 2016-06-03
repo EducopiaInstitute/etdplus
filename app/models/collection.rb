@@ -1,10 +1,17 @@
 class Collection < ActiveFedora::Base
   include Etdplus::CollectionBehavior
 
+  def main_etds
+    members.select { |m| m.resource_type.include? "ProQuest Main ETD PDF" }
+  end
+
   # check if the collection has exactly one ProQuest main ETD with PDF format
   def has_one_main_etd?
-    etds = members.select { |m| m.resource_type.include? "ProQuest Main ETD PDF" }
-    etds.size == 1
+    main_etds.size == 1
+  end
+
+  def main_etd_filename
+    main_etds[0].filename[0] if has_one_main_etd?
   end
 
   def can_add_to_proquest_etd_collection?(gf)
@@ -19,4 +26,5 @@ class Collection < ActiveFedora::Base
     self.resource_type.include? "ProQuest ETD"
   end
 
+  
 end
