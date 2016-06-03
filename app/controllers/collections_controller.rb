@@ -232,6 +232,14 @@ class CollectionsController < ApplicationController
     authorinfo = result["DISS_submission"]["DISS_authorship"]["DISS_author"]
     dissinfo = result["DISS_submission"]["DISS_description"]
     disscontent = result["DISS_submission"]["DISS_content"]
+    cmteinfo = dissinfo["DISS_cmte_member"]
+    catinfo = dissinfo["DISS_categorization"]
+
+# for cm in cmteinfo
+#   puts cm["DISS_name"]["DISS_surname"]
+# end
+
+
 
     doc = File.open("config/pqtemplate.xml") { |f| Nokogiri::XML(f) }
 
@@ -360,6 +368,56 @@ class CollectionsController < ApplicationController
           child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_suffix"]
         end
       end
+
+    end
+
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_cmte_member').each do |node|
+
+      for cm in cmteinfo
+        b = Nokogiri::XML::Node.new "DISS_name", doc
+        bsurname = Nokogiri::XML::Node.new "DISS_surname", b
+        bsurname.content = cm["DISS_name"]["DISS_surname"]
+        bfname = Nokogiri::XML::Node.new "DISS_fname", b
+        bfname.content = cm["DISS_name"]["DISS_fname"]
+        bmiddle = Nokogiri::XML::Node.new "DISS_middle", b
+        bmiddle.content = cm["DISS_name"]["DISS_middle"]
+        bsuffix = Nokogiri::XML::Node.new "DISS_suffix", b
+        bsuffix.content = cm["DISS_name"]["DISS_suffix"]
+        baffiliation = Nokogiri::XML::Node.new "DISS_affiliation", b
+        baffiliation.content = cm["DISS_name"]["DISS_affiliation"]
+
+        b.add_child(bsurname)
+        b.add_child(bfname)
+        b.add_child(bmiddle)
+        b.add_child(bsuffix)
+        b.add_child(baffiliation)
+        node.add_child(b)
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_categorization').each do |node|
+
+      for cm in catinfo["DISS_category"]
+        b = Nokogiri::XML::Node.new "DISS_category", doc
+        bcatcode = Nokogiri::XML::Node.new "DISS_cat_code", b
+        bcatcode.content = cm[0]
+        bcatdesc = Nokogiri::XML::Node.new "DISS_cat_desc", b
+        bcatdesc.content = cm[1]
+
+        b.add_child(bcatcode)
+        b.add_child(bcatdesc)
+        node.add_child(b)
+      end
+
+      b = Nokogiri::XML::Node.new "DISS_keyword", doc
+      b.content = catinfo["DISS_keyword"]
+      node.add_child(b)
+
+      b = Nokogiri::XML::Node.new "DISS_language", doc
+      b.content = catinfo["DISS_language"]
+      node.add_child(b)
 
     end
 
