@@ -1,0 +1,105 @@
+{
+  "DISS_submission":{
+    "DISS_authorship":{
+      "DISS_author":{
+        "DISS_name":{
+          "DISS_surname":"input",
+          "DISS_fname":"input",
+          "DISS_middle":"input",
+          "DISS_suffix":"input" ,
+          "DISS_affiliation":"config"
+        },
+        "DISS_contact":{
+          "DISS_contact_effdt":"input",
+          "DISS_phone_fax":{
+            "DISS_cntry_cd":null,
+            "DISS_area_code":null,
+            "DISS_phone_num":null,
+            "DISS_phone_ext":null
+          },
+          "DISS_address":{
+            "DISS_addrline":"",
+            "DISS_city":null,
+            "DISS_st":null,
+            "DISS_pcode":null,
+            "DISS_country":"input"  
+          },
+          "DISS_email":"input"
+        }
+      }
+    },
+    "DISS_description":{
+      "DISS_title":"main gf title",
+      "DISS_dates":{
+        "DISS_comp_date":"2015",
+        "DISS_accept_date":"07/30/2015"
+      },
+      "DISS_degree":"config",
+      "DISS_institution":{
+        "DISS_inst_code":"",
+        "DISS_inst_name":"",
+        "DISS_inst_contact":""
+      },
+      "DISS_advisor":{
+        "DISS_name":{
+          "DISS_surname":"input",
+          "DISS_fname":"input",
+          "DISS_middle":"input",
+          "DISS_suffix":"input" ,
+          "DISS_affiliation":"config"
+        }
+      }, 
+      "DISS_cmte_member":[
+        {"DISS_name":{
+          "DISS_surname":"input",
+          "DISS_fname":"input",
+          "DISS_middle":"input",
+          "DISS_suffix":"input" ,
+          "DISS_affiliation":"config"
+        }},
+        {"DISS_name":{
+          "DISS_surname":"input",
+          "DISS_fname":"input",
+          "DISS_middle":"input",
+          "DISS_suffix":"input" ,
+          "DISS_affiliation":"config"
+        }},
+        {"DISS_name":{
+          "DISS_surname":"input",
+          "DISS_fname":"input",
+          "DISS_middle":"input",
+          "DISS_suffix":"input" ,
+          "DISS_affiliation":"config"
+        }},
+        {"DISS_name":{
+          "DISS_surname":"input",
+          "DISS_fname":"input",
+          "DISS_middle":"input",
+          "DISS_suffix":"input" ,
+          "DISS_affiliation":"config"
+        }}
+      ],
+      "DISS_categorization":{
+        "DISS_category":{
+          "DISS_cat_code":"config",
+          "DISS_cat_desc":"input"
+        },
+        "DISS_category":{
+          "DISS_cat_code":"config",
+          "DISS_cat_desc":"input"
+        },
+        "DISS_category":{
+          "DISS_cat_code":"config",
+          "DISS_cat_desc":"input"
+        },
+        "DISS_keyword":"input"
+      }
+    },
+    "DISS_content":{
+      "DISS_abstract":{
+        "DISS_para":"input"
+      },
+      "DISS_binary":"main_file_name"
+    }
+  }
+}

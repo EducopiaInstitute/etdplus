@@ -228,6 +228,11 @@ class CollectionsController < ApplicationController
 
     result = JSON.parse(pqjson)
 
+    #all info
+    authorinfo = result["DISS_submission"]["DISS_authorship"]["DISS_author"]
+    dissinfo = result["DISS_submission"]["DISS_description"]
+    disscontent = result["DISS_submission"]["DISS_content"]
+
     doc = File.open("config/pqtemplate.xml") { |f| Nokogiri::XML(f) }
 
     doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_name').each do |node|
@@ -235,15 +240,15 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_surname'
-          child.content = result["DISS_surname"]
+          child.content = authorinfo["DISS_name"]["DISS_surname"]
         when 'DISS_fname'
-          child.content = result["DISS_fname"]
+          child.content = authorinfo["DISS_name"]["DISS_fname"]
         when 'DISS_middle'
-          child.content = result["DISS_middle"]
+          child.content = authorinfo["DISS_name"]["DISS_middle"]
         when 'DISS_affiliation'
-          child.content = result["DISS_affiliation"]
+          child.content = authorinfo["DISS_name"]["DISS_affiliation"]
         when 'DISS_suffix'
-          child.content = result["DISS_suffix"]
+          child.content = authorinfo["DISS_name"]["DISS_suffix"]
         end
       end
 
@@ -254,9 +259,9 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_contact_effdt'
-          child.content = result["DISS_contact_effdt"]
+          child.content = authorinfo["DISS_contact"]["DISS_contact_effdt"]
         when 'DISS_email'
-          child.content = result["DISS_email"]
+          child.content = authorinfo["DISS_contact"]["DISS_email"]
         end
       end
 
@@ -267,13 +272,13 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_cntry_cd'
-          child.content = result["DISS_cntry_cd"]
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_cntry_cd"]
         when 'DISS_area_code'
-          child.content = result["DISS_area_code"]
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_area_code"]
         when 'DISS_phone_num'
-          child.content = result["DISS_phone_num"]
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_phone_num"]
         when 'DISS_phone_ext'
-          child.content = result["DISS_phone_ext"]
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_phone_ext"]
         end
       end
 
@@ -284,15 +289,15 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_addrline'
-          child.content = result["DISS_addrline"]
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_addrline"]
         when 'DISS_city'
-          child.content = result["DISS_city"]
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_city"]
         when 'DISS_st'
-          child.content = result["DISS_st"]
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_st"]
         when 'DISS_pcode'
-          child.content = result["DISS_pcode"]
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_pcode"]
         when 'DISS_country'
-          child.content = result["DISS_country"]
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_country"]
         end
       end
 
@@ -303,9 +308,9 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_title'
-          child.content = result["DISS_title"]
+          child.content = dissinfo["DISS_title"]
         when 'DISS_degree'
-          child.content = result["DISS_degree"]
+          child.content = dissinfo["DISS_degree"]
         end
       end
 
@@ -316,9 +321,9 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_comp_date'
-          child.content = result["DISS_comp_date"]
+          child.content = dissinfo["DISS_dates"]["DISS_comp_date"]
         when 'DISS_accept_date'
-          child.content = result["DISS_accept_date"]
+          child.content = dissinfo["DISS_dates"]["DISS_accept_date"]
         end
       end
 
@@ -329,11 +334,11 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_inst_code'
-          child.content = result["DISS_inst_code"]
+          child.content = dissinfo["DISS_institution"]["DISS_inst_code"]
         when 'DISS_inst_name'
-          child.content = result["DISS_inst_name"]
+          child.content = dissinfo["DISS_institution"]["DISS_inst_name"]
         when 'DISS_inst_contact'
-          child.content = result["DISS_inst_contact"]
+          child.content = dissinfo["DISS_institution"]["DISS_inst_contact"]
         end
       end
 
@@ -344,15 +349,15 @@ class CollectionsController < ApplicationController
       node.children.each do |child|
         case child.name
         when 'DISS_surname'
-          child.content = result["DISS_surname"]
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_surname"]
         when 'DISS_fname'
-          child.content = result["DISS_fname"]
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_fname"]
         when 'DISS_middle'
-          child.content = result["DISS_middle"]
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_middle"]
         when 'DISS_affiliation'
-          child.content = result["DISS_affiliation"]
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_affiliation"]
         when 'DISS_suffix'
-          child.content = result["DISS_suffix"]
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_suffix"]
         end
       end
 
@@ -367,12 +372,12 @@ class CollectionsController < ApplicationController
           child.children.each do |newchild|
             case newchild.name
             when 'DISS_para'
-              newchild.content = result["DISS_para"]
+              newchild.content = disscontent["DISS_abstract"]["DISS_para"]
             end 
           end
 
         when 'DISS_binary'
-          child.content = result["DISS_binary"]
+          child.content = disscontent["DISS_binary"]
         end
       end
 
@@ -489,7 +494,14 @@ class CollectionsController < ApplicationController
     collection = Collection.find(collection_id)
 
     # get pqjson and create filename
-    newfilename = "upload_lastname_firstname"
+    # read from files for now
+    file = File.open("config/proquest_json.json", "rb")
+    pqjson = file.read
+
+    result = JSON.parse(pqjson)
+    authorinfo = result["DISS_submission"]["DISS_authorship"]["DISS_author"]
+
+    newfilename = "upload_"+ authorinfo["DISS_name"]["DISS_surname"] +"_" + authorinfo["DISS_name"]["DISS_fname"]
 
     # validate filename
     newfilename = Zaru.sanitize!(newfilename)
@@ -552,8 +564,6 @@ class CollectionsController < ApplicationController
       end
 
       # create proquest xml 
-      pqjson = '{"DISS_surname": "firstname","DISS_fname": "lastname", "DISS_contact_effdt": "07/30/2015","DISS_para": "abstract", "DISS_binary": "the.pdf"}'
-
       pqcontents = create_proquest_xml(pqjson)
 
       mets_filepath = newfilename + ".xml"
