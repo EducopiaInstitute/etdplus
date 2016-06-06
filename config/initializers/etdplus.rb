@@ -77,3 +77,6 @@ Etdplus::Application.config.x.file_feedback_level2 =
 Etdplus::Application.config.x.file_feedback_level3 =
   ['application/x-latex', 'application/x-tex', 'image/x-ms-bmp', 'image/gif', 'image/x-photo-cd',
   'application/x-photoshop', 'audio/vnd.rn-realaudio', 'audio/x-ms-wma', 'video/x-ms-wmv']
+# For Proquest Author Affiliation
+Etdplus::Application.config.x.author_affiliation = 'Virginia Tech'
+

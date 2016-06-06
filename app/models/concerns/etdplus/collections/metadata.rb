@@ -56,6 +56,7 @@ module Etdplus::Collections
         index.as :stored_searchable, :facetable
       end
       property :related_url, predicate: RDF::RDFS.seeAlso
+      property :proquest_inputs, predicate: ::RDF::DC.provenance, multiple: false
 
     end
   end

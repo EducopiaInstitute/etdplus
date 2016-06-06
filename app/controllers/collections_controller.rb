@@ -2,6 +2,14 @@ class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
   skip_load_and_authorize_resource :only => [:export_bagit, :bagit_download]
 
+  def presenter_class
+    EtdplusCollectionPresenter
+  end
+
+  def form_class
+    EtdplusCollectionEditForm
+  end
+
   def create_mets(collection, namespaces)
   
   	b = Nokogiri::XML::Builder.new
@@ -329,7 +337,7 @@ class CollectionsController < ApplicationController
   protected
     def collection_params
       form_class.model_attributes(
-        params.require(:collection).permit(:title, :description, :members, :rights,
+        params.require(:collection).permit(:title, :description, :members, :rights, :proquest_inputs,
                                            part_of: [], contributor: [], creator: [],
                                            publisher: [], date_created: [], subject: [],
                                            language: [], resource_type: [], identifier: [],

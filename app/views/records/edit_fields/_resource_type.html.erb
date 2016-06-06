@@ -1,6 +1,86 @@
 <% if controller_name == 'collections' %>  
   <%= f.input :resource_type, as: :select_with_help, collection: Sufia.config.collection_resource_types,
     input_html: { class: 'form-control', multiple: true } %>
+  <div id="proquest_inputs" class="hidden">
+    <label>Author</label><br/>
+    <label>Name</label><br/>
+    <label for="author_surname">Last Name</label>
+    <input id="author_surname" name="author_surname" type="text" />
+    <label for="author_fname">First Name</label>
+    <input id="author_fname" name="author_fname" type="text" />
+    <label for="author_mname">Middle Name</label>
+    <input id="author_mname" name="author_mname" type="text" />
+    <label for="author_suffix">Suffix</label>
+    <input id="author_suffix" name="author_suffix" type="text" /><br/>
+    <% author_affiliation = Rails.configuration.x.author_affiliation %>
+    <input id="author_affiliation" name="author_affiliation" type="hidden" value='<%="#{author_affiliation}"%>' /> <br/>
+    <label>Contact</label><br/>
+    <label for="author_contact_effdt">Effective Date</label>
+    <input id="author_contact_effdt" name="author_contact_effdt" type="date" /><br/>
+    <label>Phone</label><br/>
+    <label for="author_phone_cntry_code">Country Code</label>
+    <input id="author_phone_cntry_code" name="author_phone_cntry_code" type="text" />
+    <label for="author_phone_area_code">Area Code</label>
+    <input id="author_phone_area_code" name="author_phone_area_code" type="text" />
+    <label for="author_phone_num">Phone Number</label>
+    <input id="author_phone_num" name="author_phone_num" type="text" />
+    <label for="author_phone_ext">Phone Extension</label>
+    <input id="author_phone_ext" name="author_phone_ext" type="text" /><br/>
+    <label>Address</label><br/>
+    <label for="author_addrline">Address Line</label>
+    <input id="author_addrline" name="author_addrline" type="text" />
+    <label for="author_city">City</label>
+    <input id="author_city" name="author_city" type="text" />
+    <label for="author_st">Street</label>
+    <input id="author_st" name="author_st" type="text" />
+    <label for="author_pcode">Postal Code</label>
+    <input id="author_pcode" name="author_pcode" type="text" />
+    <label for="author_country">Country</label>
+    <input id="author_country" name="author_country" type="text" /><br/>
+    <label for="author_email">E-mail</label>
+    <input id="author_email" name="author_email" type="text" /><br/>
+    <label>Description</label><br/>
+    <label>Dates</label><br/>
+    <label for="comp_date">Complete Date</label>
+    <input id="comp_date" name="comp_date" type="date" />
+    <label for="accept_date">Accept Date</label>
+    <input id="accept_date" name="accept_date" type="date" /><br/>
+    <label for="degree">Degree</label>
+    <input id="degree" name="degree" type="text" /><br/>
+    <label>Institution</label><br/>
+    <label for="inst_code">Institution Code</label>
+    <input id="inst_code" name="inst_code" type="text" />
+    <label for="inst_name">Institution Name</label>
+    <input id="inst_name" name="inst_name" type="text" />
+    <label for="inst_contact">Institution Contact</label>
+    <input id="inst_contact" name="inst_contact" type="text" /><br/>
+    <label>Advisor</label><br/>
+    <label for="advisor_surname">Last Name</label>
+    <input id="advisor_surname" name="advisor_surname" type="text" />
+    <label for="advisor_fname">First Name</label>
+    <input id="advisor_fname" name="advisor_fname" type="text" />
+    <label for="advisor_mname">Middle Name</label>
+    <input id="advisor_mname" name="advisor_mname" type="text" />
+    <label for="advisor_suffix">Suffix</label>
+    <input id="advisor_suffix" name="advisor_suffix" type="text" /><br/>
+    <input id="advisor_affiliation" name="advisor_affiliation" type="hidden" value='<%="#{author_affiliation}"%>' /> <br/>
+    <label>Committee Members</label><br/>
+    <label for="cmte_surname">Last Name</label>
+    <input id="cmte_surname" name="cmte_surname" type="text" />
+    <label for="cmte_fname">First Name</label>
+    <input id="cmte_fname" name="cmte_fname" type="text" />
+    <label for="cmte_mname">Middle Name</label>
+    <input id="cmte_mname" name="cmte_mname" type="text" />
+    <label for="cmte_suffix">Suffix</label>
+    <input id="cmte_suffix" name="cmte_suffix" type="text" /><br/>
+    <label for="cmte_affiliation">Affiliation</label>
+    <input id="cmte_affiliation" name="cmte_affiliation" type="text" /><br/>
+    <label>Categorizations</label><br/>
+    <label>Category</label><br/>
+    <label for="cate_code">Category Code</label>
+    <input id="cate_code" name="cate_code" type="text" /><br/>
+    <input id="main_etd_pdf" name="main_etd_pdf" type="hidden" value='<%="#{@collection.main_etd_filename}"%>' /> <br/>
+  </div>
 <% else %>
   <%= f.input :resource_type, as: :select_with_help, collection: Sufia.config.file_resource_types,
     input_html: { class: 'form-control', multiple: true } %>
