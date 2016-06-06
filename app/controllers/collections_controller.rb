@@ -2,6 +2,14 @@ class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
   skip_load_and_authorize_resource :only => [:export_bagit, :export_proquest, :bagit_download]
 
+  def presenter_class
+    EtdplusCollectionPresenter
+  end
+
+  def form_class
+    EtdplusCollectionEditForm
+  end
+
   def create_mets(collection, namespaces)
   
   	b = Nokogiri::XML::Builder.new
@@ -224,7 +232,7 @@ class CollectionsController < ApplicationController
     return metsdoc.to_xml
   end
 
-  def create_proquest_xml(pqjson)
+  def create_proquest_xml(pqjson, filename)
 
     result = JSON.parse(pqjson)
 
@@ -235,14 +243,7 @@ class CollectionsController < ApplicationController
     cmteinfo = dissinfo["DISS_cmte_member"]
     catinfo = dissinfo["DISS_categorization"]
 
-# for cm in cmteinfo
-#   puts cm["DISS_name"]["DISS_surname"]
-# end
-
-
-
     doc = File.open("config/pqtemplate.xml") { |f| Nokogiri::XML(f) }
-
     doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_name').each do |node|
 
       node.children.each do |child|
@@ -431,11 +432,11 @@ class CollectionsController < ApplicationController
             case newchild.name
             when 'DISS_para'
               newchild.content = disscontent["DISS_abstract"]["DISS_para"]
-            end 
+            end
           end
 
         when 'DISS_binary'
-          child.content = disscontent["DISS_binary"]
+          child.content = filename
         end
       end
 
@@ -551,21 +552,19 @@ class CollectionsController < ApplicationController
     collection_id = params[:id]
     collection = Collection.find(collection_id)
 
-    # get pqjson and create filename
-    # read from files for now
-    file = File.open("config/proquest_json.json", "rb")
-    pqjson = file.read
+    # get pqjson and create proquest xml
+    pqjson = collection.proquest_inputs
 
     result = JSON.parse(pqjson)
     authorinfo = result["DISS_submission"]["DISS_authorship"]["DISS_author"]
 
-    newfilename = "upload_"+ authorinfo["DISS_name"]["DISS_surname"] +"_" + authorinfo["DISS_name"]["DISS_fname"]
+    newfilename = authorinfo["DISS_name"]["DISS_surname"] +"_" + authorinfo["DISS_name"]["DISS_fname"]
 
     # validate filename
     newfilename = Zaru.sanitize!(newfilename)
 
     # create proguest filename and validate that filename
-    @proquest_file = newfilename + ".zip"
+    @proquest_file = "upload_" + newfilename + ".zip"
 
     unless authorize_export(collection)
       render status: 401 and return
@@ -585,7 +584,7 @@ class CollectionsController < ApplicationController
       unless File.directory?(proquest_media_path)
         FileUtils.mkdir_p(proquest_media_path)
       end
-      
+
       collection.member_ids.each do |doc_id|
         # get file and save to temp folder
         fileObj = GenericFile.find(doc_id)
@@ -612,17 +611,17 @@ class CollectionsController < ApplicationController
 
         # add ProQuest main file to ProQuest path
         if (fileObj.resource_type.include? "ProQuest Main ETD PDF")
-          # change main etd pdf filename 
+          # change main etd pdf filename
           FileUtils.mv dir + "/" + filename, proquest_path + newfilename + ".pdf"
         else
           # add other files to ProQuest media path
-          FileUtils.mv dir + "/" + filename, proquest_media_path 
+          FileUtils.mv dir + "/" + filename, proquest_media_path
         end
 
       end
 
-      # create proquest xml 
-      pqcontents = create_proquest_xml(pqjson)
+      # create proquest xml
+      pqcontents = create_proquest_xml(pqjson, newfilename + ".pdf")
 
       mets_filepath = newfilename + ".xml"
       File.open(mets_filepath, 'w') { |file| file.write(pqcontents) }
@@ -642,7 +641,7 @@ class CollectionsController < ApplicationController
   protected
     def collection_params
       form_class.model_attributes(
-        params.require(:collection).permit(:title, :description, :members, :rights,
+        params.require(:collection).permit(:title, :description, :members, :rights, :proquest_inputs,
                                            part_of: [], contributor: [], creator: [],
                                            publisher: [], date_created: [], subject: [],
                                            language: [], resource_type: [], identifier: [],
