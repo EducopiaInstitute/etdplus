@@ -1,6 +1,6 @@
 class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
-  skip_load_and_authorize_resource :only => [:export_bagit, :bagit_download]
+  skip_load_and_authorize_resource :only => [:export_bagit, :export_proquest, :bagit_download]
 
   def presenter_class
     EtdplusCollectionPresenter
@@ -12,96 +12,96 @@ class CollectionsController < ApplicationController
 
   def create_mets(collection, namespaces)
   
-  	b = Nokogiri::XML::Builder.new
+    b = Nokogiri::XML::Builder.new
 
-  	b[:mets].mets(namespaces) {
-  	  b[:mets].metsHdr("CREATEDATE" => collection.date_created[0], "LASTMODDATE" => "2015-11-30T04:28:25")  {
-  	    b[:mets].agent("ROLE" => "CREATOR", "TYPE" => "ORGANIZATION" ) {
-  	      b[:mets].name('UNIVERSITY or SCHOOL')
-  	    }
-  	  }
+    b[:mets].mets(namespaces) {
+      b[:mets].metsHdr("CREATEDATE" => collection.date_created[0], "LASTMODDATE" => "2015-11-30T04:28:25")  {
+        b[:mets].agent("ROLE" => "CREATOR", "TYPE" => "ORGANIZATION" ) {
+          b[:mets].name('UNIVERSITY or SCHOOL')
+        }
+      }
 
-  	  b[:mets].dmdSec("ID" => "DMR1") {
-  		  b[:mets].mdRef("xlink:href" => "http://oskicat.berkeley.edu/search/v?SEARCH=GLADN184985770",
-  		  	"LOCTYPE" => "URL",
-  	 		"MDTYPE" => "MARC",
-  	 		"LABEL" => "Catalog Record") {}
-  	  }
+      b[:mets].dmdSec("ID" => "DMR1") {
+        b[:mets].mdRef("xlink:href" => "http://oskicat.berkeley.edu/search/v?SEARCH=GLADN184985770",
+          "LOCTYPE" => "URL",
+        "MDTYPE" => "MARC",
+        "LABEL" => "Catalog Record") {}
+      }
 
-  	  b[:mets].dmdSec("ID" => "DMR1") {
-  		  b[:mets].mdWrap("MDTYPE" => "MODS",
-  		  	"LABEL" => collection.title) {
-  		  	b[:mets].xmlData() {
-  		  		b[:mods].mods() {
-  		  			b[:mods].titleInfo() {
-  		  				b[:mods].title(collection.title)
-  		  			}
+      b[:mets].dmdSec("ID" => "DMR1") {
+        b[:mets].mdWrap("MDTYPE" => "MODS",
+          "LABEL" => collection.title) {
+          b[:mets].xmlData() {
+            b[:mods].mods() {
+              b[:mods].titleInfo() {
+                b[:mods].title(collection.title)
+              }
 
-  		  			# multiple AUTHOR
-  		  			b[:mods].name("type" => "personal") {
-  		  				b[:mods].namePart("ETD AUTHOR")
-  		  				b[:mods].role() {
-  		  					b[:mods].roleTerm("type" => "text", "authority" => "marcrelator"){
-  		  						b[:mods].text("Author")
-  		  					}
-  		  				}
-  		  			}
+              # multiple AUTHOR
+              b[:mods].name("type" => "personal") {
+                b[:mods].namePart("ETD AUTHOR")
+                b[:mods].role() {
+                  b[:mods].roleTerm("type" => "text", "authority" => "marcrelator"){
+                    b[:mods].text("Author")
+                  }
+                }
+              }
 
-  		  			b[:mods].typeOfResource("text")
-  		  			b[:mods].genre("authority" => "aat"){
-  						b[:mods].text("THESES or DISSERTATIONS")
-  					}
+              b[:mods].typeOfResource("text")
+              b[:mods].genre("authority" => "aat"){
+              b[:mods].text("THESES or DISSERTATIONS")
+            }
 
-  					b[:mods].originInfo() {
-  						b[:mods].place() {
-  							b[:mods].placeTerm("type" => "text") {
-  								b[:mods].text("DEGREE GRANTING INSTITUTION")
-  							}
-  						}
-  						b[:mods].publisher("DEGREE GRANTING DEPARTMENT")
-  						b[:mods].dateCreated("DEFENSE DATE")
-  					}
+            b[:mods].originInfo() {
+              b[:mods].place() {
+                b[:mods].placeTerm("type" => "text") {
+                  b[:mods].text("DEGREE GRANTING INSTITUTION")
+                }
+              }
+              b[:mods].publisher("DEGREE GRANTING DEPARTMENT")
+              b[:mods].dateCreated("DEFENSE DATE")
+            }
 
-  					b[:mods].language() {
-  						b[:mods].languageTerm("type" => "code", "authority" => "iso639-2b")	{
-  							b[:mods].text("LANGUAGE")
-  						}
-  					}
-  					b[:mods].physicalDescription()
-  		  		}
-  		  	}
-  		  }
-  	  }
+            b[:mods].language() {
+              b[:mods].languageTerm("type" => "code", "authority" => "iso639-2b") {
+                b[:mods].text("LANGUAGE")
+              }
+            }
+            b[:mods].physicalDescription()
+            }
+          }
+        }
+      }
 
-  	  b[:mets].amdSec() {
-  	  	b[:mets].rightsMD("ID" => "RMD1") {
-  	  		b[:mets].mdWrap("MDTYPE" => "OTHER", "OTHERMDTYPE" => "METSRights") {
-  	  			b[:mets].xmlData() {
-  	  				b[:rts].RightsDeclarationMD("RIGHTSCATEGORY" => "COPYRIGHTED") {
-  	  					b[:rts].RightsHolder() {
-  	  						b[:rts].RightsHolderName("The author(s)")
-  	  						b[:rts].RightsHolderContact("RIGHTS HOLDER CONTACT")
-  	  						b[:rts].RightsHolderContactAddress("address")
-  	  					}
-  	  					b[:rts].Context("CONTEXTCLASS" => "GENERAL PUBLIC") {
-  	  						b[:rts].Constraints() {
-  	  							b[:rts].ConstraintDescription("RIGHTS STATEMENT")
-  	  						}
-  	  					}
-  	  				}
-  	  			}
-  	  		}
-  	  	}
-  	  }
+      b[:mets].amdSec() {
+        b[:mets].rightsMD("ID" => "RMD1") {
+          b[:mets].mdWrap("MDTYPE" => "OTHER", "OTHERMDTYPE" => "METSRights") {
+            b[:mets].xmlData() {
+              b[:rts].RightsDeclarationMD("RIGHTSCATEGORY" => "COPYRIGHTED") {
+                b[:rts].RightsHolder() {
+                  b[:rts].RightsHolderName("The author(s)")
+                  b[:rts].RightsHolderContact("RIGHTS HOLDER CONTACT")
+                  b[:rts].RightsHolderContactAddress("address")
+                }
+                b[:rts].Context("CONTEXTCLASS" => "GENERAL PUBLIC") {
+                  b[:rts].Constraints() {
+                    b[:rts].ConstraintDescription("RIGHTS STATEMENT")
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
 
-  	  b[:mets].fileSec() {
-  	  }
+      b[:mets].fileSec() {
+      }
 
-  	  b[:mets].structMap() {
-  		  b[:mets].div("TYPE" => "text", "LABEL" => collection.title, "ADMID" => "RMD1", "DMDID" => "DMR1 DM1")
-  	  }
+      b[:mets].structMap() {
+        b[:mets].div("TYPE" => "text", "LABEL" => collection.title, "ADMID" => "RMD1", "DMDID" => "DMR1 DM1")
+      }
 
-  	}
+    }
 
     return b.to_xml
 
@@ -232,6 +232,219 @@ class CollectionsController < ApplicationController
     return metsdoc.to_xml
   end
 
+  def create_proquest_xml(pqjson, filename)
+
+    result = JSON.parse(pqjson)
+
+    #all info
+    authorinfo = result["DISS_submission"]["DISS_authorship"]["DISS_author"]
+    dissinfo = result["DISS_submission"]["DISS_description"]
+    disscontent = result["DISS_submission"]["DISS_content"]
+    cmteinfo = dissinfo["DISS_cmte_member"]
+    catinfo = dissinfo["DISS_categorization"]
+
+    doc = File.open("config/pqtemplate.xml") { |f| Nokogiri::XML(f) }
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_name').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_surname'
+          child.content = authorinfo["DISS_name"]["DISS_surname"]
+        when 'DISS_fname'
+          child.content = authorinfo["DISS_name"]["DISS_fname"]
+        when 'DISS_middle'
+          child.content = authorinfo["DISS_name"]["DISS_middle"]
+        when 'DISS_affiliation'
+          child.content = authorinfo["DISS_name"]["DISS_affiliation"]
+        when 'DISS_suffix'
+          child.content = authorinfo["DISS_name"]["DISS_suffix"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_contact').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_contact_effdt'
+          child.content = authorinfo["DISS_contact"]["DISS_contact_effdt"]
+        when 'DISS_email'
+          child.content = authorinfo["DISS_contact"]["DISS_email"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_contact/DISS_phone_fax').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_cntry_cd'
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_cntry_cd"]
+        when 'DISS_area_code'
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_area_code"]
+        when 'DISS_phone_num'
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_phone_num"]
+        when 'DISS_phone_ext'
+          child.content = authorinfo["DISS_contact"]["DISS_phone_fax"]["DISS_phone_ext"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_authorship/DISS_author/DISS_contact/DISS_address').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_addrline'
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_addrline"]
+        when 'DISS_city'
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_city"]
+        when 'DISS_st'
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_st"]
+        when 'DISS_pcode'
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_pcode"]
+        when 'DISS_country'
+          child.content = authorinfo["DISS_contact"]["DISS_address"]["DISS_country"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_title'
+          child.content = dissinfo["DISS_title"]
+        when 'DISS_degree'
+          child.content = dissinfo["DISS_degree"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_dates').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_comp_date'
+          child.content = dissinfo["DISS_dates"]["DISS_comp_date"]
+        when 'DISS_accept_date'
+          child.content = dissinfo["DISS_dates"]["DISS_accept_date"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_institution').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_inst_code'
+          child.content = dissinfo["DISS_institution"]["DISS_inst_code"]
+        when 'DISS_inst_name'
+          child.content = dissinfo["DISS_institution"]["DISS_inst_name"]
+        when 'DISS_inst_contact'
+          child.content = dissinfo["DISS_institution"]["DISS_inst_contact"]
+        end
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_advisor/DISS_name').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_surname'
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_surname"]
+        when 'DISS_fname'
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_fname"]
+        when 'DISS_middle'
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_middle"]
+        when 'DISS_affiliation'
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_affiliation"]
+        when 'DISS_suffix'
+          child.content = dissinfo["DISS_advisor"]["DISS_name"]["DISS_suffix"]
+        end
+      end
+
+    end
+
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_cmte_member').each do |node|
+
+      for cm in cmteinfo
+        b = Nokogiri::XML::Node.new "DISS_name", doc
+        bsurname = Nokogiri::XML::Node.new "DISS_surname", b
+        bsurname.content = cm["DISS_name"]["DISS_surname"]
+        bfname = Nokogiri::XML::Node.new "DISS_fname", b
+        bfname.content = cm["DISS_name"]["DISS_fname"]
+        bmiddle = Nokogiri::XML::Node.new "DISS_middle", b
+        bmiddle.content = cm["DISS_name"]["DISS_middle"]
+        bsuffix = Nokogiri::XML::Node.new "DISS_suffix", b
+        bsuffix.content = cm["DISS_name"]["DISS_suffix"]
+        baffiliation = Nokogiri::XML::Node.new "DISS_affiliation", b
+        baffiliation.content = cm["DISS_name"]["DISS_affiliation"]
+
+        b.add_child(bsurname)
+        b.add_child(bfname)
+        b.add_child(bmiddle)
+        b.add_child(bsuffix)
+        b.add_child(baffiliation)
+        node.add_child(b)
+      end
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_description/DISS_categorization').each do |node|
+
+      for cm in catinfo["DISS_category"]
+        b = Nokogiri::XML::Node.new "DISS_category", doc
+        bcatcode = Nokogiri::XML::Node.new "DISS_cat_code", b
+        bcatcode.content = cm[0]
+        bcatdesc = Nokogiri::XML::Node.new "DISS_cat_desc", b
+        bcatdesc.content = cm[1]
+
+        b.add_child(bcatcode)
+        b.add_child(bcatdesc)
+        node.add_child(b)
+      end
+
+      b = Nokogiri::XML::Node.new "DISS_keyword", doc
+      b.content = catinfo["DISS_keyword"]
+      node.add_child(b)
+
+      b = Nokogiri::XML::Node.new "DISS_language", doc
+      b.content = catinfo["DISS_language"]
+      node.add_child(b)
+
+    end
+
+    doc.xpath('//DISS_submission/DISS_content').each do |node|
+
+      node.children.each do |child|
+        case child.name
+        when 'DISS_abstract'
+
+          child.children.each do |newchild|
+            case newchild.name
+            when 'DISS_para'
+              newchild.content = disscontent["DISS_abstract"]["DISS_para"]
+            end
+          end
+
+        when 'DISS_binary'
+          child.content = filename
+        end
+      end
+
+    end
+
+    return doc.to_xml
+  end
+
   def export_bagit
     collection_id = params[:id]
     collection = Collection.find(collection_id)
@@ -332,6 +545,97 @@ class CollectionsController < ApplicationController
     unless authorize_export(@collection)
       render status: 401 and return
     end
+  end
+
+  def export_proquest
+
+    collection_id = params[:id]
+    collection = Collection.find(collection_id)
+
+    # get pqjson and create proquest xml
+    pqjson = collection.proquest_inputs
+
+    result = JSON.parse(pqjson)
+    authorinfo = result["DISS_submission"]["DISS_authorship"]["DISS_author"]
+
+    newfilename = authorinfo["DISS_name"]["DISS_surname"] +"_" + authorinfo["DISS_name"]["DISS_fname"]
+
+    # validate filename
+    newfilename = Zaru.sanitize!(newfilename)
+
+    # create proguest filename and validate that filename
+    @proquest_file = "upload_" + newfilename + ".zip"
+
+    unless authorize_export(collection)
+      render status: 401 and return
+    end
+
+    # create temp folder
+    Dir.mktmpdir do |dir|
+
+      # ProQuest path
+      proquest_path = dir + "/" + collection_id + "/upload_name/"
+      proquest_media_path = proquest_path + "name_media/"
+
+      unless File.directory?(proquest_path)
+        FileUtils.mkdir_p(proquest_path)
+      end
+
+      unless File.directory?(proquest_media_path)
+        FileUtils.mkdir_p(proquest_media_path)
+      end
+
+      collection.member_ids.each do |doc_id|
+        # get file and save to temp folder
+        fileObj = GenericFile.find(doc_id)
+        fileurl = fileObj.content.uri
+        filename = fileObj.label
+        open(dir + "/" + filename, 'wb') do |file|
+          file << open(fileurl).read
+        end
+
+        # Virus scan
+        unless fileObj.ondemand_detect_viruses
+          render status: 500
+        end
+
+        # PII scan
+        unless fileObj.ondemand_detect_pii
+          render status: 500
+        end
+
+        # XML validate scan
+        if !fileObj.ondemand_validate_xml && Rails.configuration.x.stop_xml_export
+          render status: 500
+        end
+
+        # add ProQuest main file to ProQuest path
+        if (fileObj.resource_type.include? "ProQuest Main ETD PDF")
+          # change main etd pdf filename
+          FileUtils.mv dir + "/" + filename, proquest_path + newfilename + ".pdf"
+        else
+          # add other files to ProQuest media path
+          FileUtils.mv dir + "/" + filename, proquest_media_path
+        end
+
+      end
+
+      # create proquest xml
+      pqcontents = create_proquest_xml(pqjson, newfilename + ".pdf")
+
+      mets_filepath = newfilename + ".xml"
+      File.open(mets_filepath, 'w') { |file| file.write(pqcontents) }
+      FileUtils.mv mets_filepath, proquest_path
+
+      Dir.chdir(proquest_path) do
+        system("zip -r #{collection_id}_archive.zip -D *")
+      end
+
+      FileUtils.mv proquest_path + "/#{collection_id}_archive.zip", @proquest_file
+
+      send_file @proquest_file
+    end
+
   end
 
   protected

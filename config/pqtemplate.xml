@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<DISS_submission publishing_option="0" embargo_code="0" third_party_search="Y">
+  <DISS_authorship>
+    <DISS_author type="primary">
+      <DISS_name>
+        <DISS_surname/>
+        <DISS_fname/>
+        <DISS_middle/>
+        <DISS_suffix/>
+        <DISS_affiliation/>
+      </DISS_name>
+      <DISS_contact type="current">
+        <DISS_contact_effdt/>
+        <DISS_phone_fax type="P">
+          <DISS_cntry_cd/>
+          <DISS_area_code/>
+          <DISS_phone_num/>
+          <DISS_phone_ext/>
+        </DISS_phone_fax>
+        <DISS_address>
+          <DISS_addrline/>
+          <DISS_city/>
+          <DISS_st/>
+          <DISS_pcode/>
+          <DISS_country/>
+        </DISS_address>
+        <DISS_email/>
+      </DISS_contact>
+    </DISS_author>
+  </DISS_authorship>
+  <DISS_description page_count="" type="" external_id="" apply_for_copyright="">
+    <DISS_title/>
+    <DISS_dates>
+      <DISS_comp_date/>
+      <DISS_accept_date/>
+    </DISS_dates>
+    <DISS_degree/>
+    <DISS_institution>
+      <DISS_inst_code/>
+      <DISS_inst_name/>
+      <DISS_inst_contact/>
+    </DISS_institution>
+    <DISS_advisor>
+      <DISS_name>
+        <DISS_surname/>
+        <DISS_fname/>
+        <DISS_middle/>
+        <DISS_suffix/>
+        <DISS_affiliation/>
+      </DISS_name>
+    </DISS_advisor>
+    <DISS_cmte_member/>
+    <DISS_categorization/>
+  </DISS_description>
+  <DISS_content>
+    <DISS_abstract>
+      <DISS_para/>
+    </DISS_abstract>
+    <DISS_binary type="PDF"></DISS_binary>
+  </DISS_content>
+</DISS_submission>
