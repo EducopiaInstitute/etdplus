@@ -1,3 +1,118 @@
 <% if controller_name == 'collections'&& record.proquest_inputs %> 
-  <%= proquest_inputs = JSON.parse(record.proquest_inputs) %>
+  <% proquest_inputs = JSON.parse(record.proquest_inputs) %>
+  <% submission = proquest_inputs["DISS_submission"] %>
+  <% author = submission["DISS_authorship"]["DISS_author"] %>
+  <% author_contact = author["DISS_contact"] %>
+  <% description = submission["DISS_description"] %>
+  <% author_name = author["DISS_name"] %>
+  <% author_contact = author["DISS_contact"] %>
+  <% author_phone_fax = author_contact["DISS_phone_fax"] %>
+  <% categorization = description["DISS_categorization"] %>
+  <% content = submission["DISS_content"] %>
+  <table>
+  <tbody>
+    <tr>
+      <th>Author Name</th>
+    </tr>
+    <% author["DISS_name"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <th>Author Contact</th>
+    </tr>
+    <tr>
+      <th>Contact Effective Date</th>
+      <td><%= author_contact["DISS_contact_effdt"] %></td>
+    </tr>
+    <% author_contact["DISS_phone_fax"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <th>Email</th>
+      <td><%= author_contact["DISS_email"] %></td>
+    </tr>
+    <tr>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>Title</th>
+      <td><%= description["DISS_title"] %></td>
+    </tr>
+    <% description["DISS_dates"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <th>Degree</th>
+      <td><%= description["DISS_degree"] %></td>
+    </tr>
+    <% description["DISS_institution"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <th>Advisor</th>
+    </tr>
+    <% description["DISS_advisor"]["DISS_name"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <th>Committee Members</th>
+    </tr>
+    <% description["DISS_cmte_member"].each do |cmte_member| %>
+      <% cmte_member["DISS_name"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+      <% end %>
+    <% end %>
+    <tr>
+      <th>Categorizations</th>
+    </tr>
+    <tr>
+      <th>Category</th>
+    </tr>
+    <% categorization["DISS_categorization"].each do |categorization| %>
+      <% categorization["DISS_category"].each do |k, v| %>
+    <tr>
+      <th><%= k.sub('DISS_', '') %></th>
+      <td><%= v %></td>
+    </tr>
+      <% end %>
+    <% end %>
+    <tr>
+      <th>Keyword</th>
+      <td><%= categorization["DISS_keyword"] %></td>
+    </tr>
+    <tr>
+      <th>Language</th>
+      <td><%= categorization["DISS_language"] %></td>
+    </tr>
+    <tr>
+      <th>Content</th>
+    </tr>
+    <tr>
+      <th>Abstract</th>
+      <td><%= content["DISS_abstract"]["DISS_para"] %></td>
+    </tr>
+    <tr>
+      <th>Binary File</th>
+      <td><%= content["DISS_binary"] %></td>
+    </tr>
+  </tbody>
+  </table>
 <% end %>
