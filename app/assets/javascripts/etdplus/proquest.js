@@ -53,7 +53,7 @@ function getProQuestJson() {
     "DISS_affiliation": $("#advisor_affiliation").val()}; 
   var diss_advisor = {"DISS_name": advisor_name};
   var diss_cmte_members = new Array();
-  for (var i = 0; i < 4; i ++) {
+  for (var i = 0; i < 4; i++) {
     diss_cmte_members[i] = {"DISS_name": {
       "DISS_surname": $("#cmte_surname").val(),
       "DISS_fname": $("#cmte_fname").val(),
@@ -62,7 +62,7 @@ function getProQuestJson() {
       "DISS_affiliation": $("#cmte_affiliation").val()}};
   }
   var diss_categories = new Array();
-  for (var i = 0; i < 2; i ++) {
+  for (var i = 0; i < 2; i++) {
     diss_categories[i] = {"DISS_category":{
       "DISS_cat_code": $("#cat_code").val(),
       "DISS_cat_desc": $("#cat_desc").val()}};
@@ -74,7 +74,7 @@ function getProQuestJson() {
     "DISS_institution": diss_institution,
     "DISS_advisor": diss_advisor,
     "DISS_cmte_member": diss_cmte_members,
-    "DISS_categorization": {"DISS_categorization": diss_categories,
+    "DISS_categorization": {"DISS_categories": diss_categories,
                             "DISS_keyword": keywords, 
                             "DISS_language": language}};
   var diss_content = {"DISS_abstract":{"DISS_para": $("#collection_description").val()},
@@ -83,7 +83,11 @@ function getProQuestJson() {
                           "DISS_description": diss_description, 
                           "DISS_content": diss_content};
   var proquest_json = {"DISS_submission": diss_submission};
-  return JSON.stringify(proquest_json);
+  if ($("#proquest_inputs").is(":hidden"))
+    return null;
+  else
+    return JSON.stringify(proquest_json);
+  end
 }
 
 Blacklight.onLoad(function() {

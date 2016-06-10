@@ -400,7 +400,7 @@ class CollectionsController < ApplicationController
 
     doc.xpath('//DISS_submission/DISS_description/DISS_categorization').each do |node|
 
-      for cm in catinfo["DISS_category"]
+      for cm in catinfo["DISS_categories"]["DISS_category"]
         b = Nokogiri::XML::Node.new "DISS_category", doc
         bcatcode = Nokogiri::XML::Node.new "DISS_cat_code", b
         bcatcode.content = cm[0]
@@ -648,7 +648,7 @@ class CollectionsController < ApplicationController
                                            based_near: [], tag: [], related_url: [])
         )
     end
-
+    
   private
 
     def authorize_export(collection)
