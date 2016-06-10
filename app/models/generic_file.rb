@@ -51,7 +51,7 @@ class GenericFile < ActiveFedora::Base
     rescue Etdplus::PiiFoundError => pii
       logger.warn(pii.message)
       if Rails.configuration.x.destroy_pii_immediately
-        Sufia::GenericFile::Actor.new(self, self.depositor).destroy
+        Sufia::GenericFile::Actor.new(self, User.find_by_user_key(self.depositor)).destroy
         PiiMailer.destroy_file(self.depositor, self.filename).deliver_later
         false
       else
