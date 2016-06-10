@@ -1,3 +1,5 @@
+require  'sufia/models/virus_found_error'
+
 class CollectionsController < ApplicationController
   include Sufia::CollectionsControllerBehavior
   skip_load_and_authorize_resource :only => [:export_bagit, :export_proquest, :bagit_download]
@@ -636,6 +638,25 @@ class CollectionsController < ApplicationController
       send_file @proquest_file
     end
 
+  end
+
+  def scan_viruses
+    logger.error("#{require  'sufia/models/virus_found_error'}")
+    @collection = Collection.find(params[:id])
+    @found_viruses = []
+    @collection.members.each do |gf|
+      unless gf.ondemand_detect_viruses(true)
+        @found_viruses << gf.filename
+      end
+    end
+    if @found_viruses.empty?
+      flash[:notice] = "No viruses found!"
+    else
+      flash[:alert] = "Found viruses in files: #{@found_viruses.join(',')}! \n Corresponding actions have been taken."
+    end
+    respond_to do |format|
+      format.html { redirect_to collections.collection_path(@collection)}
+    end
   end
 
   protected
