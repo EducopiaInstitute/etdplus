@@ -33,7 +33,64 @@ module EtdplusHelper
       name = '<span class="disabled btn btn-disabled">ProQuest Export</span>'.html_safe
     end
     link_to name, export_proquest_collection_path, title: title, disabled: disabled
+  end 
+
+  def proquest_submission(collection)
+    if inputs = collection.proquest_inputs
+     JSON.parse(inputs)["DISS_submission"]
+    end
   end
 
+  def author_name(submission)
+    submission.nil? ? {} : submission["DISS_authorship"]["DISS_author"]["DISS_name"]
+  end
+
+  def author_contact(submission)
+    submission.nil? ? {} : submission["DISS_authorship"]["DISS_author"]["DISS_contact"]
+  end
+
+  def author_phone_fax(contact)
+    contact.empty? ? {} : contact["DISS_phone_fax"]
+  end
+
+  def author_address(contact)
+    contact.empty? ? {} : contact["DISS_address"]
+  end
+
+  def proquest_description(submission)
+    submission.nil? ? {} : submission["DISS_description"]
+  end
+
+  def dates(description)
+    description.empty? ? {} : description["DISS_dates"]
+  end
+
+  def institution(description)
+    description.empty? ? {} : description["DISS_institution"]
+  end
+
+  def advisor_name(description)
+    description.empty? ? {} : description["DISS_advisor"]["DISS_name"]
+  end
+
+  def cmte_members(description)
+    description.empty? ? {} : description["DISS_cmte_member"]
+  end
+
+  def cmte_member_name(description)
+    description.empty? ? {} : description["DISS_cmte_member"][0]["DISS_name"]
+  end
+
+  def categorization(description)
+    description.empty? ? {} : description["DISS_categorization"]
+  end
+
+  def categories(categorization)
+    categorization.empty? ? {} : categorization["DISS_categories"][0]["DISS_category"]
+  end
+
+  def proquest_content(submission)
+    submission.nil? ? {} : submission["DISS_content"]
+  end
 end
 
