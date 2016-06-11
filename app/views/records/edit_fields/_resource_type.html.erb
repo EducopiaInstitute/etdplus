@@ -9,10 +9,10 @@
   <% end %>
     <label>Author</label><br/>
     <label>Name</label><br/>
-    <label for="author_surname">Last Name</label>
-    <input id="author_surname" name="author_surname" type="text" value='<%="#{author_name(submission)["DISS_surname"]}"%>' />
-    <label for="author_fname">First Name</label>
-    <input id="author_fname" name="author_fname" type="text" value='<%="#{author_name(submission)["DISS_fname"]}"%>' />
+    <label class="required" for="author_surname"><abbr title="required">*</abbr>Last Name</label>
+    <input id="author_surname" name="author_surname" type="text" value='<%="#{author_name(submission)["DISS_surname"]}"%>' required />
+    <label class="required" for="author_fname"><abbr title="required">*</abbr>First Name</label>
+    <input id="author_fname" name="author_fname" type="text" value='<%="#{author_name(submission)["DISS_fname"]}"%>' required />
     <label for="author_mname">Middle Name</label>
     <input id="author_mname" name="author_mname" type="text" value='<%="#{author_name(submission)["DISS_middle"]}"%>' />
     <label for="author_suffix">Suffix</label>
