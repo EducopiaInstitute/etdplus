@@ -30,7 +30,7 @@ module EtdplusHelper
     else
       title = "Should have exactly one ProQuest Main ETD PDF file"
       disabled = true
-      name = '<span class="disabled btn btn-disabled">ProQuest Export</span>'.html_safe
+      name = '<span class="disabled btn btn-disabled" style="font-size:10px">ProQuest Export</span>'.html_safe
     end
     link_to name, export_proquest_collection_path, title: title, disabled: disabled
   end 
