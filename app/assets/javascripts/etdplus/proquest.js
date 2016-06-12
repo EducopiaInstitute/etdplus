@@ -1,3 +1,27 @@
+function add_cmte_member() {
+  var idx = $("div[id^='cmte_member_name_']").length;
+  $("<div></div>").attr("id", "cmte_member_name_"+idx).appendTo("#cmte_member");
+  $("#cmte_member_name_"+idx).append($('<label for="cmte_surname_' + idx + '">Last Name</label>'));
+  $("#cmte_member_name_"+idx).append('<input id="cmte_surname_' + idx + '" name="cmte_surname_' + idx + '" type="text" />');
+  $("#cmte_member_name_"+idx).append($('<label for="cmte_fname_' + idx + '">First Name</label>'));
+  $("#cmte_member_name_"+idx).append('<input id="cmte_fname_' + idx + '" name="cmte_fname_' + idx + '" type="text" />');
+  $("#cmte_member_name_"+idx).append($('<label for="cmte_mname_' + idx + '">Middle Name</label>'));
+  $("#cmte_member_name_"+idx).append('<input id="cmte_mname_' + idx + '" name="cmte_mname_' + idx + '" type="text" />');
+  $("#cmte_member_name_"+idx).append($('<label for="cmte_suffix_' + idx + '">Suffix</label>'));
+  $("#cmte_member_name_"+idx).append('<input id="cmte_suffix_' + idx + '" name="cmte_suffix_' + idx + '" type="text" />');
+  $("#cmte_member_name_"+idx).append($('<label for="cmte_affiliation_' + idx + '">Affiliation</label>'));
+  $("#cmte_member_name_"+idx).append('<input id="cmte_affiliation_' + idx + '" name="cmte_affiliation_' + idx + '" type="text" />');
+}
+ 
+function add_category() {
+  var idx = $("div[id^='proquest_category_']").length;
+  $("<div></div>").attr("id", "proquest_category_"+idx).appendTo("#categorization");
+  $("#proquest_category_"+idx).append($('<label for="cat_code_' + idx + '">Category Code</label>'));
+  $("#proquest_category_"+idx).append('<input id="cat_code_' + idx + '" name="cat_code_' + idx + '" type="text" />');
+  $("#proquest_category_"+idx).append($('<label for="cat_desc_' + idx + '">Category Description</label>'));
+  $("#proquest_category_"+idx).append('<input id="cat_desc_' + idx + '" name="cat_desc_' + idx + '" type="text" />');
+}
+
 // once the "ProQuest ETD" resource type is chosen,
 // proquest specific fields are added to the form
 function expand_proquest_form(){
@@ -53,19 +77,21 @@ function getProQuestJson() {
     "DISS_affiliation": $("#advisor_affiliation").val()}; 
   var diss_advisor = {"DISS_name": advisor_name};
   var diss_cmte_members = new Array();
-  for (var i = 0; i < 4; i++) {
+  var num_cmte_members = $("div[id^='cmte_member_name_']").length;
+  for (var i = 0; i < num_cmte_members; i++) {
     diss_cmte_members[i] = {"DISS_name": {
-      "DISS_surname": $("#cmte_surname").val(),
-      "DISS_fname": $("#cmte_fname").val(),
-      "DISS_middle": $("#cmte_mname").val(), 
-      "DISS_suffix": $("#cmte_surname").val(),  
-      "DISS_affiliation": $("#cmte_affiliation").val()}};
+      "DISS_surname": $("#cmte_surname"+i).val(),
+      "DISS_fname": $("#cmte_fname"+i).val(),
+      "DISS_middle": $("#cmte_mname"+i).val(), 
+      "DISS_suffix": $("#cmte_surname"+i).val(),  
+      "DISS_affiliation": $("#cmte_affiliation"+i).val()}};
   }
   var diss_categories = new Array();
-  for (var i = 0; i < 2; i++) {
+  var num_categories = $("div[id^='proquest_category_']").length;
+  for (var i = 0; i < num_categories; i++) {
     diss_categories[i] = {"DISS_category":{
-      "DISS_cat_code": $("#cat_code").val(),
-      "DISS_cat_desc": $("#cat_desc").val()}};
+      "DISS_cat_code": $("#cat_code"+i).val(),
+      "DISS_cat_desc": $("#cat_desc"+i).val()}};
   }
   var diss_description = {
     "DISS_title": $("#collection_title").val(),  
@@ -102,4 +128,5 @@ Blacklight.onLoad(function() {
   $('input[type="submit"][name$="_collection"]').click(function(event) {
     $("#collection_proquest_inputs").attr('value', getProQuestJson());
   });
+  
 });

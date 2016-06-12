@@ -75,7 +75,7 @@
       <th>Committee Members</th>
     </tr>
     <% cmte_members(description).each do |cmte_member| %>
-      <% cmte_member["DISS_name"].each do |k, v| %>
+      <% cmte_member_name(cmte_member).each do |k, v| %>
     <tr>
       <th><%= k.sub('DISS_', '') %></th>
       <td><%= v %></td>
@@ -88,8 +88,8 @@
     <tr>
       <th>Category</th>
     </tr>
-    <% categorization["DISS_categories"].each do |category| %>
-      <% category["DISS_category"].each do |k, v| %>
+    <% categories(categorization(description)).each do |category| %>
+      <% category(category).each do |k, v| %>
     <tr>
       <th><%= k.sub('DISS_', '') %></th>
       <td><%= v %></td>
