@@ -75,26 +75,40 @@
     <label for="advisor_suffix">Suffix</label>
     <input id="advisor_suffix" name="advisor_suffix" type="text" value='<%="#{advisor_name["DISS_suffix"]}"%>' /><br/>
     <input id="advisor_affiliation" name="advisor_affiliation" type="hidden" value='<%="#{author_affiliation}"%>' /> <br/>
-    <label>Committee Members</label><br/>
-    <% cmte_member_name = cmte_member_name(description) %>
-    <label for="cmte_surname">Last Name</label>
-    <input id="cmte_surname" name="cmte_surname" type="text" value='<%="#{cmte_member_name["DISS_surname"]}"%>' />
-    <label for="cmte_fname">First Name</label>
-    <input id="cmte_fname" name="cmte_fname" type="text" value='<%="#{cmte_member_name["DISS_fname"]}"%>' />
-    <label for="cmte_mname">Middle Name</label>
-    <input id="cmte_mname" name="cmte_mname" type="text" value='<%="#{cmte_member_name["DISS_mname"]}"%>' />
-    <label for="cmte_suffix">Suffix</label>
-    <input id="cmte_suffix" name="cmte_suffix" type="text" value='<%="#{cmte_member_name["DISS_suffix"]}"%>' /><br/>
-    <label for="cmte_affiliation">Affiliation</label>
-    <input id="cmte_affiliation" name="cmte_affiliation" type="text" value='<%="#{cmte_member_name["DISS_affiliation"]}"%>' /><br/>
+    <div id="cmte_member">
+      <label>Committee Members</label>
+      <% cmte_members(description).each do |cmte_member, idx| %>
+        <% cmte_member_name = cmte_member_name(cmte_member) %>
+        <div id='<%= "cmte_member_name_#{idx}"%>'>
+          <label for='<%= "cmte_surname_#{idx}"%>'>Last Name</label>
+          <input id='<%= "cmte_surname_#{idx}"%>' name='<%= "cmte_surname_#{idx}"%>' type="text" value='<%="#{cmte_member_name["DISS_surname"]}"%>' />
+          <label for='<%= "cmte_fname_#{idx}"%>'>First Name</label>
+          <input id='<%= "cmte_fname_#{idx}"%>' name='<%= "cmte_fname_#{idx}"%>' type="text" value='<%="#{cmte_member_name["DISS_fname"]}"%>' />
+          <label for='<%= "cmte_mname_#{idx}"%>'>Middle Name</label>
+          <input id='<%= "cmte_mname_#{idx}"%>' name='<%= "cmte_mname_#{idx}"%>' type="text" value='<%="#{cmte_member_name["DISS_mname"]}"%>' />
+          <label for='<%= "cmte_suffix_#{idx}"%>'>Suffix</label>
+          <input id='<%= "cmte_suffix_#{idx}"%>' name='<%= "cmte_suffix_#{idx}"%>' type="text" value='<%="#{cmte_member_name["DISS_suffix"]}"%>' /><br/>
+          <label for='<%= "cmte_affiliation_#{idx}"%>'>Affiliation</label>
+          <input id='<%= "cmte_affiliation_#{idx}"%>' name='<%= "cmte_affiliation_#{idx}"%>' type="text" value='<%="#{cmte_member_name["DISS_affiliation"]}"%>' />
+        </div>
+      <% end %>
+    </div>
+    <p><button type="button" name="submit" onclick="add_cmte_member();">Add Committee Member</button></p>
     <label>Categorizations</label><br/>
-    <label>Category</label><br/>
+    <div id="categorization">
+    <label>Categories</label>
     <% categorization = categorization(description) %>
-    <% categories = categories(categorization) %>
-    <label for="cat_code">Category Code</label>
-    <input id="cat_code" name="cat_code" type="text" value='<%="#{categories["DISS_cat_code"]}"%>' /><br/>
-    <label for="cat_desc">Category Description</label>
-    <input id="cat_desc" name="cat_desc" type="text" value='<%="#{categories["DISS_cat_desc"]}"%>' /><br/>
+    <% categories(categorization).each do |category, idx| %>
+      <% cat = category(category) %>
+      <div id='<%= "proquest_category_#{idx}"%>'>
+        <label for='<%= "cat_code_#{idx}"%>'>Category Code</label>
+        <input id='<%= "cat_code_#{idx}"%>' name='<%= "cat_code_#{idx}"%>' type="text" value='<%="#{cat["DISS_cat_code"]}"%>' /><br/>
+        <label for='<%= "cat_desc_#{idx}"%>'>Category Description</label>
+        <input id='<%= "cat_desc_#{idx}"%>' name='<%= "cat_desc_#{idx}"%>' type="text" value='<%="#{cat["DISS_cat_desc"]}"%>' />
+      </div>
+    <% end %>
+    </div>
+    <p><button type="button" name="submit" onclick="add_category();">Add Category</button></p>
     <input id="main_etd_pdf" name="main_etd_pdf" type="hidden" value='<%="#{@collection.main_etd_filename}"%>' /> <br/>
   </div>
 

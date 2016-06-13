@@ -74,11 +74,11 @@ module EtdplusHelper
   end
 
   def cmte_members(description)
-    description.empty? ? {} : description["DISS_cmte_member"]
+    description.empty? ? [] : description["DISS_cmte_member"]
   end
 
-  def cmte_member_name(description)
-    description.empty? ? {} : description["DISS_cmte_member"][0]["DISS_name"]
+  def cmte_member_name(cmte_member)
+    cmte_member.nil? ? {} : cmte_member["DISS_name"]
   end
 
   def categorization(description)
@@ -86,7 +86,11 @@ module EtdplusHelper
   end
 
   def categories(categorization)
-    categorization.empty? ? {} : categorization["DISS_categories"][0]["DISS_category"]
+    categorization.empty? ? [] : categorization["DISS_categories"]
+  end
+
+  def category(category)
+    category.empty? ? {} : category["DISS_category"]
   end
 
   def proquest_content(submission)
