@@ -10,9 +10,9 @@
     <label>Author</label><br/>
     <label>Name</label><br/>
     <label class="required" for="author_surname"><abbr title="required">*</abbr>Last Name</label>
-    <input id="author_surname" name="author_surname" type="text" value='<%="#{author_name(submission)["DISS_surname"]}"%>' required />
+    <input id="author_surname" name="author_surname" type="text" value='<%="#{author_name(submission)["DISS_surname"]}"%>' />
     <label class="required" for="author_fname"><abbr title="required">*</abbr>First Name</label>
-    <input id="author_fname" name="author_fname" type="text" value='<%="#{author_name(submission)["DISS_fname"]}"%>' required />
+    <input id="author_fname" name="author_fname" type="text" value='<%="#{author_name(submission)["DISS_fname"]}"%>' />
     <label for="author_mname">Middle Name</label>
     <input id="author_mname" name="author_mname" type="text" value='<%="#{author_name(submission)["DISS_middle"]}"%>' />
     <label for="author_suffix">Suffix</label>
@@ -21,13 +21,13 @@
     <input id="author_affiliation" name="author_affiliation" type="hidden" value='<%="#{author_affiliation}"%>' /> <br/>
     <label>Contact</label><br/>
     <% contact = author_contact(submission) %>
-    <label for="author_contact_effdt">Effective Date</label>
+    <label class="required" for="author_contact_effdt"><abbr title="required">*</abbr>Effective Date</label>
     <input id="author_contact_effdt" name="author_contact_effdt" type="date" value='<%="#{contact["DISS_contact_effdt"]}"%>' /><br/>
     <label>Phone</label><br/>
     <% author_phone_fax = author_phone_fax(contact) %>
-    <label for="author_phone_cntry_code">Country Code</label>
+    <label class="required" for="author_phone_cntry_code"><abbr title="required">*</abbr>Country Code</label>
     <input id="author_phone_cntry_code" name="author_phone_cntry_code" type="text" value='<%="#{author_phone_fax["DISS_cntry_cd"]}"%>' />
-    <label for="author_phone_area_code">Area Code</label>
+    <label class="required" for="author_phone_area_code"><abbr title="required">*</abbr>Area Code</label>
     <input id="author_phone_area_code" name="author_phone_area_code" type="text" value='<%="#{author_phone_fax["DISS_area_code"]}"%>' />
     <label for="author_phone_num">Phone Number</label>
     <input id="author_phone_num" name="author_phone_num" type="text" value='<%="#{author_phone_fax["DISS_phone_num"]}"%>' />
@@ -45,7 +45,7 @@
     <input id="author_pcode" name="author_pcode" type="text" value='<%="#{author_address["DISS_pcode"]}"%>' />
     <label for="author_country">Country</label>
     <input id="author_country" name="author_country" type="text" value='<%="#{author_address["DISS_country"]}"%>' /><br/>
-    <label for="author_email">E-mail</label>
+    <label class="required" for="author_email"><abbr title="required">*</abbr>E-mail</label>
     <input id="author_email" name="author_email" type="text" value='<%="#{contact["DISS_email"]}"%>' /><br/>
     <label>Description</label><br/>
     <% description = proquest_description(submission) %>
@@ -54,21 +54,19 @@
     <input id="comp_date" name="comp_date" type="date" value='<%="#{dates(description)["DISS_comp_date"]}"%>' />
     <label for="accept_date">Accept Date</label>
     <input id="accept_date" name="accept_date" type="date" value='<%="#{dates(description)["DISS_accept_date"]}"%>' /><br/>
-    <label for="degree">Degree</label>
+    <label class="required" for="degree"><abbr title="required">*</abbr>Degree</label>
     <input id="degree" name="degree" type="text" value='<%="#{description["DISS_degree"]}"%>' /><br/>
-    <label>Institution</label><br/>
-    <% institution = institution(description) %>
-    <label for="inst_code">Institution Code</label>
-    <input id="inst_code" name="inst_code" type="text" value='<%="#{institution["DISS_inst_code"]}"%>' />
-    <label for="inst_name">Institution Name</label>
-    <input id="inst_name" name="inst_name" type="text" value='<%="#{institution["DISS_inst_name"]}"%>' />
-    <label for="inst_contact">Institution Contact</label>
-    <input id="inst_contact" name="inst_contact" type="text" value='<%="#{institution["DISS_inst_contact"]}"%>' /><br/>
+    <% inst_code = Rails.configuration.x.inst_code %>
+    <% inst_name = Rails.configuration.x.inst_name %>
+    <% inst_contact = Rails.configuration.x.inst_contact %>
+    <input id="inst_code" name="inst_code" type="hidden" value='<%="#{inst_code}"%>' />
+    <input id="inst_name" name="inst_name" type="hidden" value='<%="#{inst_name}"%>' />
+    <input id="inst_contact" name="inst_contact" type="hidden" value='<%="#{inst_contact}"%>' /><br/>
     <label>Advisor</label><br/>
     <% advisor_name = advisor_name(description) %>
-    <label for="advisor_surname">Last Name</label>
+    <label class="required" for="advisor_surname"><abbr title="required">*</abbr>Last Name</label>
     <input id="advisor_surname" name="advisor_surname" type="text" value='<%="#{advisor_name["DISS_surname"]}"%>' />
-    <label for="advisor_fname">First Name</label>
+    <label class="required" for="advisor_fname"><abbr title="required">*</abbr>First Name</label>
     <input id="advisor_fname" name="advisor_fname" type="text" value='<%="#{advisor_name["DISS_fname"]}"%>' />
     <label for="advisor_mname">Middle Name</label>
     <input id="advisor_mname" name="advisor_mname" type="text" value='<%="#{advisor_name["DISS_mname"]}"%>' />
@@ -77,7 +75,7 @@
     <input id="advisor_affiliation" name="advisor_affiliation" type="hidden" value='<%="#{author_affiliation}"%>' /> <br/>
     <div id="cmte_member">
       <label>Committee Members</label>
-      <% cmte_members(description).each do |cmte_member, idx| %>
+      <% cmte_members(description).each_with_index do |cmte_member, idx| %>
         <% cmte_member_name = cmte_member_name(cmte_member) %>
         <div id='<%= "cmte_member_name_#{idx}"%>'>
           <label for='<%= "cmte_surname_#{idx}"%>'>Last Name</label>
@@ -98,7 +96,7 @@
     <div id="categorization">
     <label>Categories</label>
     <% categorization = categorization(description) %>
-    <% categories(categorization).each do |category, idx| %>
+    <% categories(categorization).each_with_index do |category, idx| %>
       <% cat = category(category) %>
       <div id='<%= "proquest_category_#{idx}"%>'>
         <label for='<%= "cat_code_#{idx}"%>'>Category Code</label>

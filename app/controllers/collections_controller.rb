@@ -405,9 +405,9 @@ class CollectionsController < ApplicationController
       for cm in catinfo["DISS_categories"]
         b = Nokogiri::XML::Node.new "DISS_category", doc
         bcatcode = Nokogiri::XML::Node.new "DISS_cat_code", b
-        bcatcode.content = cm[0]
+        bcatcode.content = cm["DISS_category"]["DISS_cat_code"]
         bcatdesc = Nokogiri::XML::Node.new "DISS_cat_desc", b
-        bcatdesc.content = cm[1]
+        bcatdesc.content = cm["DISS_category"]["DISS_cat_desc"]
 
         b.add_child(bcatcode)
         b.add_child(bcatdesc)

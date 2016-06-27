@@ -1,6 +1,8 @@
 class Collection < ActiveFedora::Base
   include Etdplus::CollectionBehavior
 
+  before_save :clean_proquest_inputs
+
   def main_etds
     members.select { |m| m.resource_type.include? "ProQuest Main ETD PDF" }
   end
@@ -26,5 +28,8 @@ class Collection < ActiveFedora::Base
     self.resource_type.include? "ProQuest ETD"
   end
 
-  
+  private
+    def clean_proquest_inputs
+      self.proquest_inputs = nil unless self.resource_type.include?("ProQuest ETD")
+    end
 end

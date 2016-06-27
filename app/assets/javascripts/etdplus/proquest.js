@@ -1,16 +1,17 @@
 function add_cmte_member() {
   var idx = $("div[id^='cmte_member_name_']").length;
   $("<div></div>").attr("id", "cmte_member_name_"+idx).appendTo("#cmte_member");
-  $("#cmte_member_name_"+idx).append($('<label for="cmte_surname_' + idx + '">Last Name</label>'));
-  $("#cmte_member_name_"+idx).append('<input id="cmte_surname_' + idx + '" name="cmte_surname_' + idx + '" type="text" />');
-  $("#cmte_member_name_"+idx).append($('<label for="cmte_fname_' + idx + '">First Name</label>'));
-  $("#cmte_member_name_"+idx).append('<input id="cmte_fname_' + idx + '" name="cmte_fname_' + idx + '" type="text" />');
-  $("#cmte_member_name_"+idx).append($('<label for="cmte_mname_' + idx + '">Middle Name</label>'));
-  $("#cmte_member_name_"+idx).append('<input id="cmte_mname_' + idx + '" name="cmte_mname_' + idx + '" type="text" />');
-  $("#cmte_member_name_"+idx).append($('<label for="cmte_suffix_' + idx + '">Suffix</label>'));
-  $("#cmte_member_name_"+idx).append('<input id="cmte_suffix_' + idx + '" name="cmte_suffix_' + idx + '" type="text" />');
-  $("#cmte_member_name_"+idx).append($('<label for="cmte_affiliation_' + idx + '">Affiliation</label>'));
-  $("#cmte_member_name_"+idx).append('<input id="cmte_affiliation_' + idx + '" name="cmte_affiliation_' + idx + '" type="text" />');
+  var last_member = $("#cmte_member_name_"+idx);
+  last_member.append($('<label for="cmte_surname_' + idx + '">Last Name</label>'));
+  last_member.append('<input id="cmte_surname_' + idx + '" name="cmte_surname_' + idx + '" type="text" />');
+  last_member.append($('<label for="cmte_fname_' + idx + '">First Name</label>'));
+  last_member.append('<input id="cmte_fname_' + idx + '" name="cmte_fname_' + idx + '" type="text" />');
+  last_member.append($('<label for="cmte_mname_' + idx + '">Middle Name</label>'));
+  last_member.append('<input id="cmte_mname_' + idx + '" name="cmte_mname_' + idx + '" type="text" />');
+  last_member.append($('<label for="cmte_suffix_' + idx + '">Suffix</label>'));
+  last_member.append('<input id="cmte_suffix_' + idx + '" name="cmte_suffix_' + idx + '" type="text" />');
+  last_member.append($('<label for="cmte_affiliation_' + idx + '">Affiliation</label>'));
+  last_member.append('<input id="cmte_affiliation_' + idx + '" name="cmte_affiliation_' + idx + '" type="text" />');
 }
  
 function add_category() {
@@ -26,7 +27,29 @@ function add_category() {
 // proquest specific fields are added to the form
 function expand_proquest_form(){
   var proquest_selected = $("#collection_resource_type option:selected").is(':contains("ProQuest ETD")');
-  $("#proquest_inputs").toggleClass('hidden', !proquest_selected);
+  if (proquest_selected) {
+    $("#proquest_inputs").removeClass('hidden');
+    $("#proquest_inputs :input[name='author_surname']").prop('required', true);
+    $("#proquest_inputs :input[name='author_fname']").prop('required', true);
+    $("#proquest_inputs :input[name='author_contact_effdt']").prop('required', true);
+    $("#proquest_inputs :input[name='author_phone_cntry_code']").prop('required', true);
+    $("#proquest_inputs :input[name='author_phone_area_code']").prop('required', true);
+    $("#proquest_inputs :input[name='author_email']").prop('required', true);
+    $("#proquest_inputs :input[name='degree']").prop('required', true);
+    $("#proquest_inputs :input[name='advisor_surname']").prop('required', true);
+    $("#proquest_inputs :input[name='advisor_fname']").prop('required', true);
+  } else {
+    $("#proquest_inputs").addClass('hidden');
+    $("#proquest_inputs :input[name='author_surname']").prop('required', false);
+    $("#proquest_inputs :input[name='author_fname']").prop('required', false);
+    $("#proquest_inputs :input[name='author_contact_effdt']").prop('required', false);
+    $("#proquest_inputs :input[name='author_phone_cntry_code']").prop('required', false);
+    $("#proquest_inputs :input[name='author_phone_area_code']").prop('required', false);
+    $("#proquest_inputs :input[name='author_email']").prop('required', false);
+    $("#proquest_inputs :input[name='degree']").prop('required', false);
+    $("#proquest_inputs :input[name='advisor_surname']").prop('required', false);
+    $("#proquest_inputs :input[name='advisor_fname']").prop('required', false);
+  }
 }
 
 function getProQuestJson() {
@@ -80,18 +103,18 @@ function getProQuestJson() {
   var num_cmte_members = $("div[id^='cmte_member_name_']").length;
   for (var i = 0; i < num_cmte_members; i++) {
     diss_cmte_members[i] = {"DISS_name": {
-      "DISS_surname": $("#cmte_surname"+i).val(),
-      "DISS_fname": $("#cmte_fname"+i).val(),
-      "DISS_middle": $("#cmte_mname"+i).val(), 
-      "DISS_suffix": $("#cmte_surname"+i).val(),  
-      "DISS_affiliation": $("#cmte_affiliation"+i).val()}};
+      "DISS_surname": $("#cmte_surname_"+i).val(),
+      "DISS_fname": $("#cmte_fname_"+i).val(),
+      "DISS_middle": $("#cmte_mname_"+i).val(),
+      "DISS_suffix": $("#cmte_suffix_"+i).val(),
+      "DISS_affiliation": $("#cmte_affiliation_"+i).val()}};
   }
   var diss_categories = new Array();
   var num_categories = $("div[id^='proquest_category_']").length;
   for (var i = 0; i < num_categories; i++) {
     diss_categories[i] = {"DISS_category":{
-      "DISS_cat_code": $("#cat_code"+i).val(),
-      "DISS_cat_desc": $("#cat_desc"+i).val()}};
+      "DISS_cat_code": $("#cat_code_"+i).val(),
+      "DISS_cat_desc": $("#cat_desc_"+i).val()}};
   }
   var diss_description = {
     "DISS_title": $("#collection_title").val(),  
@@ -109,11 +132,11 @@ function getProQuestJson() {
                           "DISS_description": diss_description, 
                           "DISS_content": diss_content};
   var proquest_json = {"DISS_submission": diss_submission};
-  if ($("#proquest_inputs").is(":hidden"))
+  if ($("#proquest_inputs").is(":hidden")){
     return null;
-  else
+  } else {
     return JSON.stringify(proquest_json);
-  end
+  }
 }
 
 Blacklight.onLoad(function() {
