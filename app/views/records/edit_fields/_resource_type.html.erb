@@ -55,7 +55,7 @@
     <label for="accept_date">Accept Date</label>
     <input id="accept_date" name="accept_date" type="date" value='<%="#{dates(description)["DISS_accept_date"]}"%>' /><br/>
     <label class="required" for="degree"><abbr title="required">*</abbr>Degree</label>
-    <input id="degree" name="degree" type="text" value='<%="#{description["DISS_degree"]}"%>' /><br/>
+    <%= select_tag "degree", options_for_select(Rails.configuration.x.degree_options, "#{description["DISS_degree"]}") %>
     <% inst_code = Rails.configuration.x.inst_code %>
     <% inst_name = Rails.configuration.x.inst_name %>
     <% inst_contact = Rails.configuration.x.inst_contact %>
