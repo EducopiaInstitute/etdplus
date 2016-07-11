@@ -79,6 +79,7 @@ Etdplus::Application.config.x.file_feedback_level3 =
   'application/x-photoshop', 'audio/vnd.rn-realaudio', 'audio/x-ms-wma', 'video/x-ms-wmv']
 # For Proquest Form
 Etdplus::Application.config.x.author_affiliation = 'Virginia Tech'
+Etdplus::Application.config.x.degree_options = ['Ph.D.', 'M.S.', 'M.A.']
 Etdplus::Application.config.x.inst_code = '000'
 Etdplus::Application.config.x.inst_name = 'Virginia Tech'
 Etdplus::Application.config.x.inst_contact = 'root@localhost'
