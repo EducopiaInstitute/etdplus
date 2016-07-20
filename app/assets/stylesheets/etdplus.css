@@ -1,5 +1,13 @@
 .color-box {
-    width: 10px;
-    height: 10px;
-    display: inline-block;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+
+div.tutorial-video {
+  width    : 100%;
+  height   : 100%;
+  left     : 20px;
+  bottom   : 0px;
+  position : relative;
 }
