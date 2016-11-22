@@ -70,7 +70,7 @@ class GenericFile < ActiveFedora::Base
     found_pii = []
     file_path = local_path_for_content
     Dir.mktmpdir do |dir|
-      cmd_string = "bulk_extractor -o #{dir}/bulk_extractor #{file_path}"
+      cmd_string = "bulk_extractor -S ssn_mode=2 -o #{dir}/bulk_extractor #{file_path}"
       Open3.popen3(cmd_string)
       sleep(1)
       found_pii = Dir.foreach("#{dir}/bulk_extractor").select { |entry|
