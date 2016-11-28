@@ -553,6 +553,11 @@ class CollectionsController < ApplicationController
 
     collection_id = params[:id]
     collection = Collection.find(collection_id)
+    unless collection.has_one_main_etd?
+      flash[:error] ||= "This collection does have exactly one ProQuest Main ETD PDF file."
+      redirect_to collections.collection_path(collection)
+      return
+    end
 
     # get pqjson and create proquest xml
     pqjson = collection.proquest_inputs
