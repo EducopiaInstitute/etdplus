@@ -1,3 +1,6 @@
+# Documentation
+ETDplus Workbench Documentation
+
 # Requirements for a Collection to be exportable as a ProQuest package:
 
 * When creating the Collection, should set "ProQuest ETD" as one of its resource types.
