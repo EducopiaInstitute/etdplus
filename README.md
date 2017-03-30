@@ -1,5 +1,6 @@
 # Documentation
 ETDplus Workbench Documentation
+https://docs.google.com/document/d/1hwReXaOOYALVhm0QjE97gOLhWM1HNadVPDJvrgIWdX4/edit#
 
 # Requirements for a Collection to be exportable as a ProQuest package:
 
